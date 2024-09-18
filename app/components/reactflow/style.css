@@ -39,12 +39,7 @@ div.customHandle.target {
   border-color: #673ab7;
 }
 
-.customNodeBody input {
-  padding: 0;
-  border: 0;
-  width: 100%;
-  border-radius: 4px;
-}
+
 
 /* div.customHandle {
   width: 100%;
@@ -191,4 +186,20 @@ body > section {
 .switch input:disabled ~ label {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.customNodeBody input:focus, 
+.customNodeBody input:active {
+  border: 2px solid #000 !important;
+}
+.customNodeBody input {
+  padding: 0;
+  border: 0;
+  width: 100%;
+  outline: none;
+  border-radius: 4px;
+  border-width: 2px;
+  background-color: transparent;
+  border-color: transparent !important;
+  text-align: center;
 }

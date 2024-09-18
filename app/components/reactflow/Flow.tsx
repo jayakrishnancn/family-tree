@@ -152,6 +152,7 @@ const EasyConnectExample = ({
       connectionLineComponent={CustomConnectionLine}
       connectionLineStyle={connectionLineStyle}
       snapToGrid
+      minZoom={0.1}
     >
       <Controls />
       <MiniMap />

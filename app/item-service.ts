@@ -2,6 +2,7 @@ import { firestoreDb } from "./firebase/config";
 import { updateDoc, getDoc, doc, setDoc } from "firebase/firestore";
 import { NodesAndEdges } from "./page";
 import { Node } from "@xyflow/react";
+import { SexEnum } from "./components/reactflow/CustomNode";
 
 const getRef = (userId: string) => doc(firestoreDb, userId, "project-1");
 
@@ -24,7 +25,7 @@ const initialNodes = [
   {
     id: "0",
     type: "custom",
-    data: { label: "", image: "/f.svg" },
+    data: { label: "", sex: SexEnum.Unknown },
     position: { x: 0, y: 50 },
   },
 ] as Node[];
