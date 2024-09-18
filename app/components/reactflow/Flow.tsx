@@ -151,6 +151,7 @@ const EasyConnectExample = ({
       onInit={setRfInstance}
       connectionLineComponent={CustomConnectionLine}
       connectionLineStyle={connectionLineStyle}
+      snapToGrid
     >
       <Controls />
       <MiniMap />
