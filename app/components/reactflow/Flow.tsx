@@ -126,7 +126,7 @@ const EasyConnectExample = ({
   const onAdd = useCallback(() => {
     const newNode = {
       id: getId(),
-      data: { label: "Added node" },
+      data: { label: "" },
       type: "custom",
       position: {
         x: 0,
