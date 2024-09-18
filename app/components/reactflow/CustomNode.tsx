@@ -70,6 +70,7 @@ export default function CustomNode({ id, data }: any) {
             name="text"
             value={data?.label ?? ""}
             placeholder="Name"
+            autoComplete="off"
             onChange={onChange}
             className="nodrag"
           />
