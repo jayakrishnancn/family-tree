@@ -117,48 +117,42 @@ export default function Home() {
 
   return (
     <div>
-      {!userId ? (
-        <Login />
-      ) : (
-        <div>
-          <div className="flex gap-4 m-4 justify-between">
-            <div className="flex items-center flex-col">
-              <span className="switch">
-                <input
-                  id="switch-rounded"
-                  type="checkbox"
-                  checked={isAutoSaveOn}
-                  onChange={() => {
-                    setIsAutoSaveOn((prev) => !prev);
-                  }}
-                />
-                <label htmlFor="switch-rounded"></label>
-              </span>
-              <b>Auto Save {isAutoSaveOn ? "ON" : "OFF"}</b>
-            </div>
-            <button className="button-74 round" onClick={handleLogout}>
-              Logout - {user?.displayName ?? "Unknown"}
-            </button>
-          </div>
-
-          <div
-            style={{
-              height: "80vh",
-              border: "2px solid #000",
-              margin: "4px ",
-              borderRadius: 10,
-            }}
-          >
-            <ReactFlowProvider>
-              <Flow
-                initialEdges={data.edges}
-                initialNodes={data.nodes}
-                onChange={onChange}
-              />
-            </ReactFlowProvider>
-          </div>
+      <div className="flex gap-4 m-4 justify-between">
+        <div className="flex items-center flex-col">
+          <span className="switch">
+            <input
+              id="switch-rounded"
+              type="checkbox"
+              checked={isAutoSaveOn}
+              onChange={() => {
+                setIsAutoSaveOn((prev) => !prev);
+              }}
+            />
+            <label htmlFor="switch-rounded"></label>
+          </span>
+          <b>Auto Save {isAutoSaveOn ? "ON" : "OFF"}</b>
         </div>
-      )}
+        <button className="button-74 round" onClick={handleLogout}>
+          Logout - {user?.displayName ?? "Unknown"}
+        </button>
+      </div>
+
+      <div
+        style={{
+          height: "80vh",
+          border: "2px solid #000",
+          margin: "4px ",
+          borderRadius: 10,
+        }}
+      >
+        <ReactFlowProvider>
+          <Flow
+            initialEdges={data.edges}
+            initialNodes={data.nodes}
+            onChange={onChange}
+          />
+        </ReactFlowProvider>
+      </div>
     </div>
   );
 }
