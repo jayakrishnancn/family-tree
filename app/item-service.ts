@@ -13,7 +13,7 @@ import { SexEnum } from "./components/reactflow/CustomNode";
 
 const PROJECT = "PROJECT-1";
 const getRef = (userId: string) => doc(firestoreDb, userId, PROJECT);
-const getAuditRef = (userId: string, timeStamp: number) =>
+const getAuditRef = (userId: string, timeStamp: number | string) =>
   doc(firestoreDb, "auditTrail", userId, PROJECT, timeStamp + "");
 const getAuditsRef = (userId: string) =>
   collection(firestoreDb, "auditTrail", userId, PROJECT);
@@ -54,6 +54,7 @@ export async function createTree(userId: string): Promise<NodesAndEdges> {
 export type AudotNodesAndEdges = {
   data: NodesAndEdges;
   updatedTs: number;
+  id: string;
 };
 
 export async function updateTree(
@@ -88,7 +89,11 @@ export async function getAuditTrail(
     const docSnap = await getDocs(getAuditsRef(userId));
     docSnap.forEach((item) => {
       const data = item.data();
-      data && items.push(data as AudotNodesAndEdges);
+      data &&
+        items.push({
+          ...data,
+          id: item.id,
+        } as AudotNodesAndEdges);
     });
     items.sort((a, b) => b.updatedTs - a.updatedTs);
     return items;
@@ -97,4 +102,10 @@ export async function getAuditTrail(
   }
   // no record exist
   return null;
+}
+
+export async function deleteAuditTrail(ids: string[], userId: string) {
+  const batch = writeBatch(firestoreDb);
+  ids.forEach((id) => batch.delete(getAuditRef(userId, id)));
+  await batch.commit();
 }

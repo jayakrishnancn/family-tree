@@ -10,6 +10,7 @@ import { auth } from "./firebase/config";
 import { Bounce, toast, ToastOptions } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import Link from "next/link";
+import Checkbox from "./components/Checkbox";
 
 export type NodesAndEdges = {
   nodes: Node[];
@@ -127,19 +128,15 @@ export default function Home() {
             setIsAutoSaveOn((prev) => !prev);
           }}
         >
-          <span className="switch">
-            <input
-              id="switch-rounded"
-              type="checkbox"
-              checked={isAutoSaveOn}
-              onChange={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setIsAutoSaveOn((prev) => !prev);
-              }}
-            />
-            <label htmlFor="switch-rounded"></label>
-          </span>
+          <Checkbox
+            id="auto-save"
+            isChecked={isAutoSaveOn}
+            onChange={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsAutoSaveOn((prev) => !prev);
+            }}
+          />
           <b>Auto Save {isAutoSaveOn ? "ON" : "OFF"}</b>
         </div>
         <button className="button-74" onClick={handleLogout}>

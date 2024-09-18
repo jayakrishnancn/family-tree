@@ -1,6 +1,11 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { AudotNodesAndEdges, getAuditTrail, updateTree } from "../item-service";
+import {
+  AudotNodesAndEdges,
+  deleteAuditTrail,
+  getAuditTrail,
+  updateTree,
+} from "../item-service";
 import useAuth from "../firebase/useAuth";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
@@ -63,6 +68,25 @@ export default function AuditTrail() {
     setShowModalData(null);
   };
 
+  const deleteItem = (id: string) => {
+    if (!userId) {
+      return;
+    }
+    setIsLoading(true);
+    deleteAuditTrail([id], userId)
+      .then(() => {
+        toast.warn("Deleted");
+        return fetchData();
+      })
+      .catch((error) => {
+        toast.error("Error deelting data" + error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+        setShowModalData(null);
+      });
+  };
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);
@@ -104,28 +128,40 @@ export default function AuditTrail() {
             </tr>
           ) : (
             items.map((item, index) => (
-              <tr key={item.updatedTs}>
+              <tr key={item.id}>
                 <td className="border  border-2 p-2 border-slate-300 text-center  ">
                   {new Date(item.updatedTs).toLocaleString()}
                 </td>
                 <td className="border  border-2 p-2 border-slate-300 text-center">
-                  <button
-                    disabled={index === 0}
-                    className="button-74  text-sm"
-                    onClick={() => {
-                      handleRestore(item.data);
-                    }}
-                  >
-                    Restore
-                  </button>
-                  <button
-                    className="button-74 text-sm"
-                    onClick={() => {
-                      setShowModalData(item);
-                    }}
-                  >
-                    View
-                  </button>
+                  <div>
+                    <button
+                      disabled={index === 0}
+                      className="button-74 flex-1 text-sm"
+                      onClick={() => {
+                        handleRestore(item.data);
+                      }}
+                    >
+                      Restore
+                    </button>
+
+                    <button
+                      disabled={index === 0}
+                      className="button-74 flex-1 text-sm"
+                      onClick={() => {
+                        deleteItem(item.id);
+                      }}
+                    >
+                      Delete
+                    </button>
+                    <button
+                      className="button-74 flex-1 text-sm"
+                      onClick={() => {
+                        setShowModalData(item);
+                      }}
+                    >
+                      View
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))
