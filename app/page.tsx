@@ -85,7 +85,7 @@ export default function Home() {
         <Login />
       ) : (
         <div>
-          <div className="flex gap-4 mb-4 justify-between">
+          <div className="flex gap-4 m-4 justify-between">
             <div className="flex items-center flex-col">
               <span className="switch">
                 <input
