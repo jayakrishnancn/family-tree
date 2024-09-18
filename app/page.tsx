@@ -36,6 +36,7 @@ export default function Home() {
     nodeAndEdges: NodesAndEdges,
     eventFromAutoSave: boolean
   ) => {
+    console.log(nodeAndEdges, eventFromAutoSave, isAutoSaveOn);
     if (!userId) {
       return;
     }
@@ -46,9 +47,7 @@ export default function Home() {
     }
 
     updateTree(userId, nodeAndEdges, !eventFromAutoSave)
-      .then(() => {
-        toast.success("Saved", toastConfigs);
-      })
+      .then((res) => res && toast.success("Saved", toastConfigs))
       .catch((error) => {
         console.log(error);
         toast.error("Error" + (error?.message ?? "unknown error"));

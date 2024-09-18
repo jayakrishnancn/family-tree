@@ -1,15 +1,13 @@
 .customNodeBody {
   width: 150px;
   height: 100px;
-  border: 3px solid #422800;
+  border: 2px solid #422800;
   position: relative;
   border-radius: 10px;
   font-weight: bold;
   background: #fbeee0;
   cursor: grab;
-  border-bottom: 6px;
-  border-right: 4px;
-
+  box-shadow: #422800 2px 2px 0 0;
 }
 
 div.customHandle {
@@ -24,18 +22,21 @@ div.customHandle {
   border-radius: 4px;
   color: #fff;
   font-size: 9px;
-  border: 2px solid #222138;
+  border: 2px solid #e24d1f;
+  
 }
 
 div.customHandle.source {
   top: auto;
   bottom: -10px;
-  background-color: black;
+  background-color: #ffa082;
 }
+
 div.customHandle.target {
   top: -10px;
   bottom: auto;
-  background-color: red;
+  background-color: #ae69ba;
+  border-color: #673ab7;
 }
 
 .customNodeBody input {

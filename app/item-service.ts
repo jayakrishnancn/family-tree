@@ -41,10 +41,10 @@ export async function updateTree(
   userId: string,
   item: NodesAndEdges,
   force: boolean
-): Promise<void> {
-  if (!force && (item.edges.length == 0 || item.nodes.length == 0)) {
-    return;
+): Promise<boolean> {
+  if (!force && item.nodes.length === 0) {
+    return false;
   }
   console.log("Updating...", userId, item);
-  return updateDoc(getRef(userId), item);
+  return updateDoc(getRef(userId), item).then((_) => true);
 }
