@@ -70,6 +70,7 @@ export default function Home() {
   };
 
   useEffect(() => {
+    console.log(userId, "userId");
     if (!userId || loading) {
       return;
     }
@@ -83,12 +84,14 @@ export default function Home() {
         }
 
         return createTree(userId).then((res) => {
-          toast.success("Created new Project", toastConfigs);
           setData(res);
+          setIsLoading(false);
+          toast.success("Created new Project", toastConfigs);
         });
       })
       .catch((error) => {
         console.log(error);
+        setIsLoading(false);
         toast.error("Error" + (error?.message ?? "unknown error"));
       })
       .finally(() => {
@@ -96,14 +99,16 @@ export default function Home() {
       });
   }, [loading, userId]);
 
-  if (isLoading) {
-    return "Loading data...";
-  }
   if (loading) {
     return "Loading account details...";
   }
+
   if (!userId) {
     return <Login />;
+  }
+
+  if (isLoading) {
+    return "Loading data...";
   }
 
   if (!data) {
