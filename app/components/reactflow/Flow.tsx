@@ -14,6 +14,8 @@ import {
   applyNodeChanges,
   Controls,
   MiniMap,
+  Connection,
+  FinalConnectionState,
 } from "@xyflow/react";
 
 import CustomNode from "./CustomNode";
@@ -48,8 +50,6 @@ const defaultEdgeOptions = {
   },
 };
 
-const flowKey = "uid";
-
 const getId = () => `${Date.now()}`;
 
 const EasyConnectExample = ({
@@ -63,7 +63,7 @@ const EasyConnectExample = ({
 }) => {
   const [nodes, setNodes] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const [rfInstance, setRfInstance] = useState(null);
+  const [rfInstance, setRfInstance] = useState<any>(null);
   const { screenToFlowPosition } = useReactFlow();
 
   const onNodesChange: OnNodesChange = useCallback(
@@ -72,12 +72,15 @@ const EasyConnectExample = ({
   );
 
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
+    (params: Connection | Edge) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
   );
 
   const onConnectEnd = useCallback(
-    (event, connectionState) => {
+    (event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => {
+      if (!connectionState.fromNode?.id) {
+        return;
+      }
       // when a connection is dropped on the pane it's not valid
       if (!connectionState.isValid) {
         // we need to remove the wrapper bounds, in order to get the correct position
@@ -93,11 +96,11 @@ const EasyConnectExample = ({
           }),
           data: { label: `` },
           origin: [0.5, 0.0],
-        };
+        } as Node;
 
         setNodes((nds) => nds.concat(newNode));
         setEdges((eds) =>
-          eds.concat({ id, source: connectionState.fromNode.id, target: id })
+          eds.concat({ id, source: connectionState.fromNode!.id, target: id })
         );
       }
     },

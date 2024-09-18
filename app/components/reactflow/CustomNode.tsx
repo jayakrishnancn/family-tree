@@ -12,7 +12,7 @@ function getNextItem(currentItem: string): string {
   return items[nextIndex];
 }
 
-export default function CustomNode({ id, data }) {
+export default function CustomNode({ id, data }: any) {
   const connection = useConnection();
   const { updateNodeData } = useReactFlow();
 

@@ -1,10 +1,15 @@
-import { getStraightPath, useInternalNode } from "@xyflow/react";
+import {
+  getStraightPath,
+  InternalNode,
+  Node,
+  useInternalNode,
+} from "@xyflow/react";
 
 import { getEdgeParams } from "./utils";
 
-function FloatingEdge({ id, source, target, markerEnd, style }) {
-  const sourceNode = useInternalNode(source);
-  const targetNode = useInternalNode(target);
+function FloatingEdge({ id, source, target, markerEnd, style }: any) {
+  const sourceNode: InternalNode<Node> | undefined = useInternalNode(source);
+  const targetNode: InternalNode<Node> | undefined = useInternalNode(target);
 
   if (!sourceNode || !targetNode) {
     return null;

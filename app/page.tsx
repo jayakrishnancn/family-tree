@@ -105,7 +105,7 @@ export default function Home() {
             </button>
           </div>
           <ToastContainer />
-          {data.edges.length > 0 && (
+          {data.nodes.length > 0 && (
             <div
               style={{
                 height: "80vh",
