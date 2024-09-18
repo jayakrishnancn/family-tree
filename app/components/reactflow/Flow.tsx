@@ -16,6 +16,8 @@ import {
   MiniMap,
   Connection,
   FinalConnectionState,
+  Background,
+  BackgroundVariant,
 } from "@xyflow/react";
 
 import CustomNode from "./CustomNode";
@@ -156,6 +158,7 @@ const Flow = ({
       minZoom={0.1}
     >
       <Controls />
+      <Background variant={BackgroundVariant.Lines} />
       <MiniMap />
       {showPanel && (
         <Panel position="top-right">
