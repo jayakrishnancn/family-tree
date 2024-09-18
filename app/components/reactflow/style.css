@@ -88,9 +88,13 @@ div.customHandle.target {
   background-color: #fff;
 }
 
-.button-74:active {
+.button-74:active, .button-74:disabled{
   box-shadow: #422800 2px 2px 0 0;
   transform: translate(2px, 2px);
+}
+.button-74:disabled{
+  background-color: #999;
+  pointer-events: none;
 }
 
 @media (min-width: 768px) {

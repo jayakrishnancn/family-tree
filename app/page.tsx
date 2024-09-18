@@ -32,19 +32,27 @@ export default function Home() {
   const { user, loading } = useAuth();
   const userId = user?.uid ?? "";
   const [isAutoSaveOn, setIsAutoSaveOn] = useState(false);
-  const onChange = (nodeAndEdges: NodesAndEdges, isAutoSave: boolean) => {
+  const onChange = (
+    nodeAndEdges: NodesAndEdges,
+    eventFromAutoSave: boolean
+  ) => {
     if (!userId) {
       return;
     }
 
-    if (!isAutoSaveOn && isAutoSave) {
+    if (!isAutoSaveOn && eventFromAutoSave) {
       console.log("autosave disabled");
       return;
     }
 
-    updateTree(userId, nodeAndEdges).then(() => {
-      toast.success("Saved", toastConfigs);
-    });
+    updateTree(userId, nodeAndEdges, !eventFromAutoSave)
+      .then(() => {
+        toast.success("Saved", toastConfigs);
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Error" + (error?.message ?? "unknown error"));
+      });
   };
 
   const handleLogout = (): void => {
@@ -57,6 +65,8 @@ export default function Home() {
       .catch((error) => {
         // An error happened.
         console.error("Error signing out: ", error);
+
+        toast.error("Error signing out:" + (error?.message ?? "unknown error"));
       });
   };
 
@@ -75,11 +85,24 @@ export default function Home() {
       })
       .then((res) => {
         res && toast.success("Saved", toastConfigs);
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Error" + (error?.message ?? "unknown error"));
       });
   }, [loading, userId]);
-  return loading || !data ? (
-    "loading... "
-  ) : (
+
+  if (loading) {
+    return "Loading...";
+  }
+  if (!userId) {
+    return <Login />;
+  }
+  if (!data) {
+    return "Error loading data";
+  }
+
+  return (
     <div>
       {!userId ? (
         <Login />
@@ -105,24 +128,22 @@ export default function Home() {
             </button>
           </div>
           <ToastContainer />
-          {data.nodes.length > 0 && (
-            <div
-              style={{
-                height: "80vh",
-                border: "2px solid #000",
-                margin: "4px ",
-                borderRadius: 10,
-              }}
-            >
-              <ReactFlowProvider>
-                <Flow
-                  initialEdges={data.edges}
-                  initialNodes={data.nodes}
-                  onChange={onChange}
-                />
-              </ReactFlowProvider>
-            </div>
-          )}
+          <div
+            style={{
+              height: "80vh",
+              border: "2px solid #000",
+              margin: "4px ",
+              borderRadius: 10,
+            }}
+          >
+            <ReactFlowProvider>
+              <Flow
+                initialEdges={data.edges}
+                initialNodes={data.nodes}
+                onChange={onChange}
+              />
+            </ReactFlowProvider>
+          </div>
         </div>
       )}
     </div>

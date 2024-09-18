@@ -24,7 +24,7 @@ const initialNodes = [
   {
     id: "0",
     type: "custom",
-    data: { label: "Node", image: "/f.svg" },
+    data: { label: "", image: "/f.svg" },
     position: { x: 0, y: 50 },
   },
 ] as Node[];
@@ -39,9 +39,10 @@ export async function createTree(userId: string) {
 
 export async function updateTree(
   userId: string,
-  item: NodesAndEdges
+  item: NodesAndEdges,
+  force: boolean
 ): Promise<void> {
-  if (item.edges.length == 0 || item.nodes.length == 0) {
+  if (!force && (item.edges.length == 0 || item.nodes.length == 0)) {
     return;
   }
   console.log("Updating...", userId, item);
