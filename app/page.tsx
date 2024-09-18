@@ -7,7 +7,7 @@ import { createTree, getTree, updateTree } from "./item-service";
 import Login from "./login/page";
 import useAuth from "./firebase/useAuth";
 import { auth } from "./firebase/config";
-import { Bounce, toast, ToastContainer, ToastOptions } from "react-toastify";
+import { Bounce, toast, ToastOptions } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 
 export type NodesAndEdges = {
@@ -32,11 +32,11 @@ export default function Home() {
   const { user, loading } = useAuth();
   const userId = user?.uid ?? "";
   const [isAutoSaveOn, setIsAutoSaveOn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const onChange = (
     nodeAndEdges: NodesAndEdges,
     eventFromAutoSave: boolean
   ) => {
-    console.log(nodeAndEdges, eventFromAutoSave, isAutoSaveOn);
     if (!userId) {
       return;
     }
@@ -47,10 +47,10 @@ export default function Home() {
     }
 
     updateTree(userId, nodeAndEdges, !eventFromAutoSave)
-      .then((res) => res && toast.success("Saved", toastConfigs))
+      .then((res) => res === true && toast.success("Saved", toastConfigs))
       .catch((error) => {
         console.log(error);
-        toast.error("Error" + (error?.message ?? "unknown error"));
+        toast.error("Error: " + (error?.message ?? "unknown error"));
       });
   };
 
@@ -73,32 +73,41 @@ export default function Home() {
     if (!userId || loading) {
       return;
     }
+    setIsLoading(true);
     getTree(userId)
       .then((res) => {
         console.log(userId, res, "res");
-        if (res === null) {
-          return createTree(userId);
+        if (res !== null) {
+          setData(res);
+          return;
         }
-        setData(res);
-        return null;
-      })
-      .then((res) => {
-        res && toast.success("Saved", toastConfigs);
+
+        return createTree(userId).then((res) => {
+          toast.success("Created new Project", toastConfigs);
+          setData(res);
+        });
       })
       .catch((error) => {
         console.log(error);
         toast.error("Error" + (error?.message ?? "unknown error"));
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, [loading, userId]);
 
+  if (isLoading) {
+    return "Loading data...";
+  }
   if (loading) {
-    return "Loading...";
+    return "Loading account details...";
   }
   if (!userId) {
     return <Login />;
   }
+
   if (!data) {
-    return "Error loading data";
+    return "Error loading data!";
   }
 
   return (
@@ -126,7 +135,7 @@ export default function Home() {
               Logout - {user?.displayName ?? "Unknown"}
             </button>
           </div>
-          <ToastContainer />
+
           <div
             style={{
               height: "80vh",

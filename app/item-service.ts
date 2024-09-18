@@ -3,7 +3,7 @@ import { updateDoc, getDoc, doc, setDoc } from "firebase/firestore";
 import { NodesAndEdges } from "./page";
 import { Node } from "@xyflow/react";
 
-const getRef = (userId: string) => doc(firestoreDb, userId, "item");
+const getRef = (userId: string) => doc(firestoreDb, userId, "project-1");
 
 export async function getTree(userId: string): Promise<NodesAndEdges | null> {
   console.log("Fetching...", userId);
@@ -12,7 +12,7 @@ export async function getTree(userId: string): Promise<NodesAndEdges | null> {
     if (docSnap.exists()) {
       return docSnap.data() as NodesAndEdges;
     }
-    return { nodes: [], edges: [] };
+    return null;
   } catch (e) {
     console.error("error", e);
   }
@@ -29,12 +29,13 @@ const initialNodes = [
   },
 ] as Node[];
 
-export async function createTree(userId: string) {
+export async function createTree(userId: string): Promise<NodesAndEdges> {
   console.log("creating new ...", userId);
-  return setDoc(getRef(userId), {
+  const data = {
     nodes: initialNodes,
     edges: [],
-  } as NodesAndEdges);
+  } as NodesAndEdges;
+  return setDoc(getRef(userId), data).then(() => data);
 }
 
 export async function updateTree(
