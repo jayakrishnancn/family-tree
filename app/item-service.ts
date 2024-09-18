@@ -1,10 +1,22 @@
 import { firestoreDb } from "./firebase/config";
-import { updateDoc, getDoc, doc, setDoc } from "firebase/firestore";
+import {
+  getDoc,
+  doc,
+  setDoc,
+  writeBatch,
+  getDocs,
+  collection,
+} from "firebase/firestore";
 import { NodesAndEdges } from "./page";
 import { Node } from "@xyflow/react";
 import { SexEnum } from "./components/reactflow/CustomNode";
 
-const getRef = (userId: string) => doc(firestoreDb, userId, "project-1");
+const PROJECT = "PROJECT-1";
+const getRef = (userId: string) => doc(firestoreDb, userId, PROJECT);
+const getAuditRef = (userId: string, timeStamp: number) =>
+  doc(firestoreDb, "auditTrail", userId, PROJECT, timeStamp + "");
+const getAuditsRef = (userId: string) =>
+  collection(firestoreDb, "auditTrail", userId, PROJECT);
 
 export async function getTree(userId: string): Promise<NodesAndEdges | null> {
   console.log("Fetching...", userId);
@@ -39,6 +51,11 @@ export async function createTree(userId: string): Promise<NodesAndEdges> {
   return setDoc(getRef(userId), data).then(() => data);
 }
 
+export type AudotNodesAndEdges = {
+  data: NodesAndEdges;
+  updatedTs: number;
+};
+
 export async function updateTree(
   userId: string,
   item: NodesAndEdges,
@@ -47,6 +64,37 @@ export async function updateTree(
   if (!force && item.nodes.length === 0) {
     return false;
   }
+  const batch = writeBatch(firestoreDb);
+  batch.update(getRef(userId), item);
+
+  const auditTrail = getAuditRef(userId, Date.now());
+
+  batch.set(auditTrail, {
+    data: item,
+    updatedTs: Date.now(),
+  } as AudotNodesAndEdges);
+
   console.log("Updating...", userId, item);
-  return updateDoc(getRef(userId), item).then((_) => true);
+  await batch.commit();
+  return true;
+}
+
+export async function getAuditTrail(
+  userId: string
+): Promise<AudotNodesAndEdges[] | null> {
+  console.log("Fetching...", userId);
+  try {
+    const items = [] as AudotNodesAndEdges[];
+    const docSnap = await getDocs(getAuditsRef(userId));
+    docSnap.forEach((item) => {
+      const data = item.data();
+      data && items.push(data as AudotNodesAndEdges);
+    });
+    items.sort((a, b) => b.updatedTs - a.updatedTs);
+    return items;
+  } catch (e) {
+    console.error("error", e);
+  }
+  // no record exist
+  return null;
 }

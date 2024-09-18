@@ -9,6 +9,7 @@ import useAuth from "./firebase/useAuth";
 import { auth } from "./firebase/config";
 import { Bounce, toast, ToastOptions } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
+import Link from "next/link";
 
 export type NodesAndEdges = {
   nodes: Node[];
@@ -117,14 +118,23 @@ export default function Home() {
 
   return (
     <div>
-      <div className="flex gap-4 m-4 justify-between">
-        <div className="flex items-center flex-col">
+      <div className="flex m-4 justify-start">
+        <div
+          className="button-74 flex items-center gap-4"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsAutoSaveOn((prev) => !prev);
+          }}
+        >
           <span className="switch">
             <input
               id="switch-rounded"
               type="checkbox"
               checked={isAutoSaveOn}
-              onChange={() => {
+              onChange={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 setIsAutoSaveOn((prev) => !prev);
               }}
             />
@@ -132,9 +142,12 @@ export default function Home() {
           </span>
           <b>Auto Save {isAutoSaveOn ? "ON" : "OFF"}</b>
         </div>
-        <button className="button-74 round" onClick={handleLogout}>
+        <button className="button-74" onClick={handleLogout}>
           Logout - {user?.displayName ?? "Unknown"}
         </button>
+        <Link href="/audit-trail" className="button-74 ">
+          Audit Trail
+        </Link>
       </div>
 
       <div
@@ -147,6 +160,7 @@ export default function Home() {
       >
         <ReactFlowProvider>
           <Flow
+            showPanel
             initialEdges={data.edges}
             initialNodes={data.nodes}
             onChange={onChange}

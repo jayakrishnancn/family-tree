@@ -22,7 +22,6 @@ import CustomNode from "./CustomNode";
 import FloatingEdge from "./FloatingEdge";
 
 import "@xyflow/react/dist/style.css";
-import "./style.css";
 import CustomConnectionLine from "./CustomConnectionLine";
 import useDebounce from "./useDebounce";
 import { NodesAndEdges } from "@/app/page";
@@ -52,14 +51,16 @@ const defaultEdgeOptions = {
 
 const getId = () => `${Date.now()}`;
 
-const EasyConnectExample = ({
+const Flow = ({
   initialEdges,
   initialNodes,
   onChange,
+  showPanel,
 }: {
   initialEdges: Edge[];
   initialNodes: Node[];
   onChange: (nodeAndEdges: NodesAndEdges, isAutoSave: boolean) => void;
+  showPanel?: boolean;
 }) => {
   const [nodes, setNodes] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -156,16 +157,18 @@ const EasyConnectExample = ({
     >
       <Controls />
       <MiniMap />
-      <Panel position="top-right">
-        <button className="button-74" onClick={onSave}>
-          save
-        </button>
-        <button className="button-74" onClick={onAdd}>
-          add node
-        </button>
-      </Panel>
+      {showPanel && (
+        <Panel position="top-right">
+          <button className="button-74" onClick={onSave}>
+            save
+          </button>
+          <button className="button-74" onClick={onAdd}>
+            add node
+          </button>
+        </Panel>
+      )}
     </ReactFlow>
   );
 };
 
-export default EasyConnectExample;
+export default Flow;
