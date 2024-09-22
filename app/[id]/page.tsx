@@ -18,7 +18,7 @@ export type NodesAndEdges = {
   edges: Edge[];
 };
 
-const toastConfigs = {
+export const toastConfigs = {
   position: "bottom-right",
   autoClose: 5000,
   hideProgressBar: false,

@@ -1,3 +1,4 @@
+"use client";
 // hooks/useAuth.js
 import { useEffect, useState } from "react";
 import { auth } from "./config.js";
