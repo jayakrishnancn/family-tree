@@ -4,8 +4,10 @@ import Login from "./login/page";
 import useAuth from "./firebase/useAuth";
 import { auth } from "./firebase/config";
 import { toast } from "react-toastify";
-import { toastConfigs } from "./[id]/page";
+import { toastConfigs } from "./[id]/[projectName]/page";
 import Spinner from "./components/Spinner/Spinner";
+import Link from "next/link";
+import ButtonGroup from "./components/ButtonGroup";
 
 interface AuthCheckProps {}
 
@@ -34,11 +36,16 @@ const AuthCheck: FC<PropsWithChildren<AuthCheckProps>> = (props) => {
   ) : showLogin ? (
     <Login />
   ) : (
-    <div className="max-w-4xl mx-auto p-4">
+    <div className="mx-auto p-4">
       <div className="flex justify-end p-4">
-        <button className="primary-button text-small" onClick={handleLogout}>
-          Logout - {user?.displayName ?? "Unknown"}
-        </button>
+        <ButtonGroup>
+          <Link href="/" className="primary-button">
+            Home
+          </Link>
+          <button className="primary-button text-small" onClick={handleLogout}>
+            Logout - {user?.displayName ?? "Unknown"}
+          </button>
+        </ButtonGroup>
       </div>
       {props.children}
     </div>

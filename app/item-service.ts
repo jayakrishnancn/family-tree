@@ -10,7 +10,7 @@ import {
   arrayUnion,
   arrayRemove,
 } from "firebase/firestore";
-import { NodesAndEdges } from "./[id]/page";
+import { NodesAndEdges } from "./[id]/[projectName]/page";
 
 type FirebaseRecord = NodesAndEdges & {
   allowedEmail: string[];

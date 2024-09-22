@@ -54,7 +54,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="mx-auto border rounded-md p-4">
+    <div className="max-w-2xl mx-auto border rounded-md p-4">
       <div className="flex justify-between border-b pb-4">
         <h1 className="text-2xl font-bold leading-7 text-gray-900 ">
           Projects
@@ -89,7 +89,7 @@ export default function HomePage() {
                     {project.name}
                   </p>
                   <p className="text-xs leading-5 text-gray-500">
-                    {project.sharedWith.length > 0 ? (
+                    {project.sharedWith?.length > 0 ? (
                       <BiSolidGroup fontSize={18} />
                     ) : (
                       <BiSolidUser />
@@ -101,7 +101,10 @@ export default function HomePage() {
                 <ButtonGroup align="right">
                   <Button disabled>Share</Button>
                   <Button onClick={handleDelete(project)}>Delete</Button>
-                  <Link href={project.id} className="primary-button">
+                  <Link
+                    href={`/${userId}/${project.id}`}
+                    className="primary-button"
+                  >
                     View
                   </Link>
                 </ButtonGroup>

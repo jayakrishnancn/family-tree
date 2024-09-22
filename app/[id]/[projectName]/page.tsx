@@ -1,17 +1,17 @@
 "use client";
 import "@xyflow/react/dist/style.css";
-import Flow from "../components/reactflow/Flow";
+import Flow from "../../components/reactflow/Flow";
 import { Edge, Node, ReactFlowProvider } from "@xyflow/react";
 import { useEffect, useState } from "react";
-import { createTree, getTree, updateTree } from "../item-service";
-import Login from "../login/page";
-import useAuth from "../firebase/useAuth";
-import { auth } from "../firebase/config";
+import { updateTree } from "../../item-service";
+import useAuth from "../../firebase/useAuth";
+import { auth } from "../../firebase/config";
 import { Bounce, toast, ToastOptions } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import Link from "next/link";
-import Checkbox from "../components/Checkbox";
-import ShareBoard from "../components/ShareBoard";
+import Checkbox from "../../components/Checkbox";
+import ShareBoard from "../../components/ShareBoard";
+import { getRecord } from "../../item-service-v2";
 
 export type NodesAndEdges = {
   nodes: Node[];
@@ -30,17 +30,19 @@ export const toastConfigs = {
   transition: Bounce,
 } as ToastOptions;
 
-export default function Home({ params }: { params: { id?: string } }) {
+export default function Home({ params }: any) {
   const [data, setData] = useState<NodesAndEdges | null>(null);
   const { user, loading } = useAuth();
-  const recordId = params.id ?? user?.uid ?? "";
+  const userId = decodeURIComponent(params.id ?? "") || null;
+  const recordId = decodeURIComponent(params.projectName ?? "") || null;
+
   const [isAutoSaveOn, setIsAutoSaveOn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const onChange = (
     nodeAndEdges: NodesAndEdges,
     eventFromAutoSave: boolean
   ) => {
-    if (!recordId || !user?.uid) {
+    if (!recordId || !userId) {
       return;
     }
 
@@ -73,24 +75,17 @@ export default function Home({ params }: { params: { id?: string } }) {
   };
 
   useEffect(() => {
-    console.log(recordId, "recordId");
-    if (!recordId || loading || !user?.uid) {
+    if (!recordId || loading || !userId) {
       return;
     }
     setIsLoading(true);
-    getTree(recordId)
+    getRecord(userId, recordId)
       .then((res) => {
         console.log(recordId, res, "res");
         if (res !== null) {
           setData(res);
           return;
         }
-
-        return createTree(recordId).then((res) => {
-          setData(res);
-          setIsLoading(false);
-          toast.success("Created new Project", toastConfigs);
-        });
       })
       .catch((error) => {
         console.log(error);
@@ -100,73 +95,71 @@ export default function Home({ params }: { params: { id?: string } }) {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [loading, recordId, user?.uid]);
+  }, [loading, recordId, userId]);
 
   if (loading) {
     return "Loading account details...";
-  }
-
-  if (!user?.uid) {
-    return <Login />;
   }
 
   if (isLoading) {
     return "Loading data...";
   }
 
-  if (!data) {
+  if (!data || !userId) {
     return "Error loading data!";
   }
 
   return (
-    <div>
-      <div className="flex m-4 justify-start">
-        <div
-          className="primary-button flex items-center gap-4"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setIsAutoSaveOn((prev) => !prev);
-          }}
-        >
-          <Checkbox
-            id="auto-save"
-            isChecked={isAutoSaveOn}
-            onChange={(e) => {
+    recordId && (
+      <div>
+        <div className="flex m-4 justify-start">
+          <div
+            className="primary-button flex items-center gap-4"
+            onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               setIsAutoSaveOn((prev) => !prev);
             }}
-          />
-          <b>Auto Save {isAutoSaveOn ? "ON" : "OFF"}</b>
+          >
+            <Checkbox
+              id="auto-save"
+              isChecked={isAutoSaveOn}
+              onChange={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsAutoSaveOn((prev) => !prev);
+              }}
+            />
+            <b>Auto Save {isAutoSaveOn ? "ON" : "OFF"}</b>
+          </div>
+
+          <ShareBoard id={recordId} />
+          <Link href="/audit-trail" className="primary-button ">
+            Audit Trail
+          </Link>
+          <button className="primary-button" onClick={handleLogout}>
+            Logout - {user?.displayName ?? "Unknown"}
+          </button>
         </div>
 
-        <ShareBoard id={recordId} />
-        <Link href="/audit-trail" className="primary-button ">
-          Audit Trail
-        </Link>
-        <button className="primary-button" onClick={handleLogout}>
-          Logout - {user?.displayName ?? "Unknown"}
-        </button>
+        <div
+          style={{
+            height: "80vh",
+            border: "2px solid #000",
+            margin: "4px ",
+            borderRadius: 10,
+          }}
+        >
+          <ReactFlowProvider>
+            <Flow
+              showPanel
+              initialEdges={data.edges}
+              initialNodes={data.nodes}
+              onChange={onChange}
+            />
+          </ReactFlowProvider>
+        </div>
       </div>
-
-      <div
-        style={{
-          height: "80vh",
-          border: "2px solid #000",
-          margin: "4px ",
-          borderRadius: 10,
-        }}
-      >
-        <ReactFlowProvider>
-          <Flow
-            showPanel
-            initialEdges={data.edges}
-            initialNodes={data.nodes}
-            onChange={onChange}
-          />
-        </ReactFlowProvider>
-      </div>
-    </div>
+    )
   );
 }

@@ -55,10 +55,13 @@ export async function createRecordIfNotExist(
   return setDoc(getDoc(userId, project), data, {}).then(() => data);
 }
 
-export async function getRecord(userId: string, project: string) {
+export async function getRecord(
+  userId: string,
+  project: string
+): Promise<ProjectRecord | null> {
   const record = await getDocFromServer(getDoc(userId, project));
   if (record.exists()) {
-    return record.data();
+    return record.data() as ProjectRecord;
   }
   return null;
 }

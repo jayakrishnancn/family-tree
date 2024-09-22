@@ -1,4 +1,4 @@
-import { NodesAndEdges } from "../[id]/page";
+import { NodesAndEdges } from "../[id]/[projectName]/page";
 
 export type ProjectRecord = {
   id: string;
