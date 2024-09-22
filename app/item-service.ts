@@ -3,7 +3,6 @@ import { firestoreDb } from "./firebase/config";
 import {
   getDoc,
   doc,
-  setDoc,
   writeBatch,
   getDocs,
   collection,
@@ -12,8 +11,6 @@ import {
   arrayRemove,
 } from "firebase/firestore";
 import { NodesAndEdges } from "./[id]/page";
-import { Node } from "@xyflow/react";
-import { SexEnum } from "./components/reactflow/CustomNode";
 
 type FirebaseRecord = NodesAndEdges & {
   allowedEmail: string[];
@@ -39,25 +36,6 @@ export async function getTree(userId: string): Promise<NodesAndEdges | null> {
   }
   // no record exist
   return null;
-}
-
-const initialNodes = [
-  {
-    id: "0",
-    type: "custom",
-    data: { label: "", sex: SexEnum.Unknown },
-    position: { x: 0, y: 50 },
-  },
-] as Node[];
-
-export async function createTree(userId: string): Promise<NodesAndEdges> {
-  console.log("creating new ...", userId);
-  const data = {
-    nodes: initialNodes,
-    edges: [],
-    allowedEmail: [],
-  } as FirebaseRecord;
-  return setDoc(getRef(userId), data).then(() => data);
 }
 
 export type AuditFirebaseFamilyRecord = {

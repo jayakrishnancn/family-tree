@@ -1,29 +1,53 @@
+"use client";
 import Link from "next/link";
 import { BiSolidGroup } from "react-icons/bi";
 import Button from "./components/Button";
 import ButtonGroup from "./components/ButtonGroup";
 import { IoMdAdd } from "react-icons/io";
-
-const projects = [
-  {
-    name: "Leslie Alexander",
-    id: "leslie.alexander@example.com",
-    imageUrl:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    lastUpdatedBy: "Jayakrishnan",
-    lastUpdatedDatedTs: Date.now(),
-    sharedWith: ["abc", "def"],
-  },
-];
+import Modal from "./components/reactflow/Modal";
+import CreateForm from "./components/CreateForm";
+import useAuth from "./firebase/useAuth";
+import { useEffect, useState } from "react";
+import { listenToCollection } from "./item-service-v2";
+import { ProjectRecord } from "./types/proejct";
 
 export default function HomePage() {
+  const { user } = useAuth();
+  const [showCreate, setShowCreate] = useState(false);
+  const [projects, setProjects] = useState<ProjectRecord[]>([]);
+  const handleClose = () => {
+    setShowCreate(false);
+  };
+  const handleOpen = () => {
+    setShowCreate(true);
+  };
+
+  const userId = user?.uid ?? "";
+
+  useEffect(() => {
+    if (!userId) {
+      return;
+    }
+    const unsub = listenToCollection(userId, setProjects);
+    return () => unsub();
+  }, [userId]);
+
   return (
     <div className="mx-auto border rounded-md p-4">
       <div className="flex justify-between border-b pb-4">
         <h1 className="text-2xl font-bold leading-7 text-gray-900 ">
           Projects
         </h1>
-        <Button startIcon={<IoMdAdd />}>Create</Button>
+        <Button startIcon={<IoMdAdd />} onClick={handleOpen}>
+          Create
+        </Button>
+        <Modal show={showCreate}>
+          <CreateForm
+            onCancel={handleClose}
+            onSuccess={handleClose}
+            userId={userId}
+          />
+        </Modal>
       </div>
       <ul role="list" className="divide-y divide-gray-100">
         {projects.map((person) => (
@@ -48,7 +72,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="flex sm:flex-col sm:items-end">
-              <ButtonGroup>
+              <ButtonGroup align="right">
                 <Button disabled>Share</Button>
                 <Button disabled>Delete</Button>
                 <Link href={person.id} className="primary-button">
@@ -56,7 +80,7 @@ export default function HomePage() {
                 </Link>
               </ButtonGroup>
               <p className="mt-1 text-xs leading-5 text-gray-500">
-                Last updated by {person.lastUpdatedBy}
+                Last updated by {person.lastUpdatedBy?.displayName ?? "Unknown"}
                 <br />
                 on {new Date(person.lastUpdatedDatedTs).toLocaleString()}
               </p>

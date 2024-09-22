@@ -4,6 +4,7 @@ import "./globals.css";
 import "./style.css";
 import { ToastContainer } from "react-toastify";
 import AuthCheck from "./AuthCheck";
+import { SpinnerProvider } from "./context/SpinnerContext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -32,7 +33,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ToastContainer />
-        <AuthCheck>{children}</AuthCheck>
+        <SpinnerProvider>
+          <AuthCheck>{children}</AuthCheck>
+        </SpinnerProvider>
       </body>
     </html>
   );
