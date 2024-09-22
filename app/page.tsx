@@ -11,6 +11,7 @@ import { Bounce, toast, ToastOptions } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import Link from "next/link";
 import Checkbox from "./components/Checkbox";
+import ShareBoard from "./components/ShareBoard";
 
 export type NodesAndEdges = {
   nodes: Node[];
@@ -29,17 +30,17 @@ const toastConfigs = {
   transition: Bounce,
 } as ToastOptions;
 
-export default function Home() {
+export default function Home({ params }: { params: { id?: string } }) {
   const [data, setData] = useState<NodesAndEdges | null>(null);
   const { user, loading } = useAuth();
-  const userId = user?.uid ?? "";
+  const recordId = params.id ?? user?.uid ?? "";
   const [isAutoSaveOn, setIsAutoSaveOn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const onChange = (
     nodeAndEdges: NodesAndEdges,
     eventFromAutoSave: boolean
   ) => {
-    if (!userId) {
+    if (!recordId || !user?.uid) {
       return;
     }
 
@@ -48,7 +49,7 @@ export default function Home() {
       return;
     }
 
-    updateTree(userId, nodeAndEdges, !eventFromAutoSave)
+    updateTree(recordId, nodeAndEdges, !eventFromAutoSave)
       .then((res) => res === true && toast.success("Saved", toastConfigs))
       .catch((error) => {
         console.log(error);
@@ -72,20 +73,20 @@ export default function Home() {
   };
 
   useEffect(() => {
-    console.log(userId, "userId");
-    if (!userId || loading) {
+    console.log(recordId, "recordId");
+    if (!recordId || loading || !user?.uid) {
       return;
     }
     setIsLoading(true);
-    getTree(userId)
+    getTree(recordId)
       .then((res) => {
-        console.log(userId, res, "res");
+        console.log(recordId, res, "res");
         if (res !== null) {
           setData(res);
           return;
         }
 
-        return createTree(userId).then((res) => {
+        return createTree(recordId).then((res) => {
           setData(res);
           setIsLoading(false);
           toast.success("Created new Project", toastConfigs);
@@ -99,13 +100,13 @@ export default function Home() {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [loading, userId]);
+  }, [loading, recordId, user?.uid]);
 
   if (loading) {
     return "Loading account details...";
   }
 
-  if (!userId) {
+  if (!user?.uid) {
     return <Login />;
   }
 
@@ -139,12 +140,14 @@ export default function Home() {
           />
           <b>Auto Save {isAutoSaveOn ? "ON" : "OFF"}</b>
         </div>
-        <button className="button-74" onClick={handleLogout}>
-          Logout - {user?.displayName ?? "Unknown"}
-        </button>
+
+        <ShareBoard id={recordId} />
         <Link href="/audit-trail" className="button-74 ">
           Audit Trail
         </Link>
+        <button className="button-74" onClick={handleLogout}>
+          Logout - {user?.displayName ?? "Unknown"}
+        </button>
       </div>
 
       <div

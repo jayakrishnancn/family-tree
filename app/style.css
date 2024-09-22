@@ -195,7 +195,7 @@ body > section {
 .customNodeBody input:active {
   border: 2px solid #000 !important;
 }
-.customNodeBody input {
+.customNodeBody input   {
   padding: 0;
   border: 0;
   width: 100%;
@@ -205,4 +205,10 @@ body > section {
   background-color: transparent;
   border-color: transparent !important;
   text-align: center;
+}
+
+input.customInput{
+  border: 1px solid #333;
+  border-radius: 3px;
+  padding: 5px 7px;
 }

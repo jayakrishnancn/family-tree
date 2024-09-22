@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import {
-  AudotNodesAndEdges,
+  AuditFirebaseFamilyRecord,
   deleteAuditTrail,
   getAuditTrail,
   updateTree,
@@ -16,7 +16,7 @@ import Flow from "../components/reactflow/Flow";
 import { ReactFlowProvider } from "@xyflow/react";
 
 export default function AuditTrail() {
-  const [items, setItems] = useState([] as AudotNodesAndEdges[]);
+  const [items, setItems] = useState([] as AuditFirebaseFamilyRecord[]);
   const [isLoading, setIsLoading] = useState(true);
   const { user, loading } = useAuth();
   const userId = user?.uid;
@@ -60,9 +60,8 @@ export default function AuditTrail() {
     [fetchData, userId]
   );
 
-  const [showModalData, setShowModalData] = useState<AudotNodesAndEdges | null>(
-    null
-  );
+  const [showModalData, setShowModalData] =
+    useState<AuditFirebaseFamilyRecord | null>(null);
 
   const handleClose = () => {
     setShowModalData(null);

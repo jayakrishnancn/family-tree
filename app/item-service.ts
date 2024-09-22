@@ -1,4 +1,5 @@
 import { firestoreDb } from "./firebase/config";
+
 import {
   getDoc,
   doc,
@@ -6,10 +7,17 @@ import {
   writeBatch,
   getDocs,
   collection,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
 } from "firebase/firestore";
 import { NodesAndEdges } from "./page";
 import { Node } from "@xyflow/react";
 import { SexEnum } from "./components/reactflow/CustomNode";
+
+type FirebaseRecord = NodesAndEdges & {
+  allowedEmail: string[];
+};
 
 const PROJECT = "PROJECT-1";
 const getRef = (userId: string) => doc(firestoreDb, userId, PROJECT);
@@ -23,7 +31,7 @@ export async function getTree(userId: string): Promise<NodesAndEdges | null> {
   try {
     const docSnap = await getDoc(getRef(userId));
     if (docSnap.exists()) {
-      return docSnap.data() as NodesAndEdges;
+      return docSnap.data() as FirebaseRecord;
     }
     return null;
   } catch (e) {
@@ -47,12 +55,13 @@ export async function createTree(userId: string): Promise<NodesAndEdges> {
   const data = {
     nodes: initialNodes,
     edges: [],
-  } as NodesAndEdges;
+    allowedEmail: [],
+  } as FirebaseRecord;
   return setDoc(getRef(userId), data).then(() => data);
 }
 
-export type AudotNodesAndEdges = {
-  data: NodesAndEdges;
+export type AuditFirebaseFamilyRecord = {
+  data: FirebaseRecord;
   updatedTs: number;
   id: string;
 };
@@ -73,7 +82,7 @@ export async function updateTree(
   batch.set(auditTrail, {
     data: item,
     updatedTs: Date.now(),
-  } as AudotNodesAndEdges);
+  } as AuditFirebaseFamilyRecord);
 
   console.log("Updating...", userId, item);
   await batch.commit();
@@ -82,10 +91,10 @@ export async function updateTree(
 
 export async function getAuditTrail(
   userId: string
-): Promise<AudotNodesAndEdges[] | null> {
+): Promise<AuditFirebaseFamilyRecord[] | null> {
   console.log("Fetching...", userId);
   try {
-    const items = [] as AudotNodesAndEdges[];
+    const items = [] as AuditFirebaseFamilyRecord[];
     const docSnap = await getDocs(getAuditsRef(userId));
     docSnap.forEach((item) => {
       const data = item.data();
@@ -93,7 +102,7 @@ export async function getAuditTrail(
         items.push({
           ...data,
           id: item.id,
-        } as AudotNodesAndEdges);
+        } as AuditFirebaseFamilyRecord);
     });
     items.sort((a, b) => b.updatedTs - a.updatedTs);
     return items;
@@ -108,4 +117,18 @@ export async function deleteAuditTrail(ids: string[], userId: string) {
   const batch = writeBatch(firestoreDb);
   ids.forEach((id) => batch.delete(getAuditRef(userId, id)));
   await batch.commit();
+}
+
+export async function addEmailToSharedList(userId: string, emailId: string) {
+  const ref = getRef(userId);
+  await updateDoc(ref, {
+    allowedEmail: arrayUnion(emailId),
+  });
+}
+
+export async function removeEmailToSharedList(userId: string, emailId: string) {
+  const ref = getRef(userId);
+  await updateDoc(ref, {
+    allowedEmail: arrayRemove(emailId),
+  });
 }
