@@ -1,5 +1,6 @@
 import {
   collection,
+  deleteDoc,
   doc,
   getDocFromServer,
   onSnapshot,
@@ -10,13 +11,6 @@ import { auth, firestoreDb } from "./firebase/config";
 import { SexEnum } from "./components/reactflow/CustomNode";
 import { Node } from "@xyflow/react";
 import { ProjectRecord } from "./types/proejct";
-
-// type PermissionRecord = NodesAndEdges & {
-//   permissions: {
-//     reads: string[];
-//     writes: string[];
-//   };
-// };
 
 const initialNodes = [
   {
@@ -82,6 +76,11 @@ export const listenToCollection = (
         name: docData.name ?? doc.id,
       } as ProjectRecord;
     });
+    data.sort((a, b) => b.lastUpdatedDatedTs - a.lastUpdatedDatedTs);
     callback(data);
   });
 };
+
+export async function deleteProject(userId: string, project: string) {
+  await deleteDoc(getDoc(userId, project));
+}

@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { BiSolidGroup } from "react-icons/bi";
+import { BiSolidGroup, BiSolidUser } from "react-icons/bi";
 import Button from "./components/Button";
 import ButtonGroup from "./components/ButtonGroup";
 import { IoMdAdd } from "react-icons/io";
@@ -8,13 +8,16 @@ import Modal from "./components/reactflow/Modal";
 import CreateForm from "./components/CreateForm";
 import useAuth from "./firebase/useAuth";
 import { useEffect, useState } from "react";
-import { listenToCollection } from "./item-service-v2";
+import { deleteProject, listenToCollection } from "./item-service-v2";
 import { ProjectRecord } from "./types/proejct";
+import { toast } from "react-toastify";
+import { useSpinnerContext } from "./context/SpinnerContext";
 
 export default function HomePage() {
   const { user } = useAuth();
   const [showCreate, setShowCreate] = useState(false);
   const [projects, setProjects] = useState<ProjectRecord[]>([]);
+  const { setLoading } = useSpinnerContext();
   const handleClose = () => {
     setShowCreate(false);
   };
@@ -31,6 +34,24 @@ export default function HomePage() {
     const unsub = listenToCollection(userId, setProjects);
     return () => unsub();
   }, [userId]);
+
+  const handleDelete = (project: ProjectRecord) => () => {
+    if (!project.id) {
+      toast.error("unknwon projectId");
+      return;
+    }
+    setLoading(true);
+    deleteProject(userId, project.id)
+      .then(() => {
+        toast.success("Project deleted successfully.");
+      })
+      .catch((error) => {
+        toast.error("Cant delete project. " + error?.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   return (
     <div className="mx-auto border rounded-md p-4">
@@ -50,43 +71,52 @@ export default function HomePage() {
         </Modal>
       </div>
       <ul role="list" className="divide-y divide-gray-100">
-        {projects.map((person) => (
-          <li
-            key={person.id}
-            className="flex justify-between gap-x-6 py-5 flex-col sm:flex-row"
-          >
-            <div className="flex min-w-0 gap-x-4">
-              {/* eslint-disable-next-line @next/next/no-img-element*/}
-              <img
-                alt=""
-                src={person.imageUrl}
-                className="h-12 w-12 flex-none rounded-full bg-gray-50"
-              />
-              <div className="min-w-0 flex-auto">
-                <p className="text-sm font-semibold leading-6 text-gray-900">
-                  {person.name}
-                </p>
-                <p className="text-xs leading-5 text-gray-500">
-                  <BiSolidGroup fontSize={18} />
+        {projects.length > 0 ? (
+          projects.map((project) => (
+            <li
+              key={project.id}
+              className="flex justify-between gap-x-6 py-5 flex-col sm:flex-row"
+            >
+              <div className="flex min-w-0 gap-x-4">
+                {/* eslint-disable-next-line @next/next/no-img-element*/}
+                <img
+                  alt=""
+                  src={project.imageUrl}
+                  className="h-12 w-12 flex-none rounded-full bg-gray-50"
+                />
+                <div className="min-w-0 flex-auto">
+                  <p className="text-sm font-semibold leading-6 text-gray-900">
+                    {project.name}
+                  </p>
+                  <p className="text-xs leading-5 text-gray-500">
+                    {project.sharedWith.length > 0 ? (
+                      <BiSolidGroup fontSize={18} />
+                    ) : (
+                      <BiSolidUser />
+                    )}
+                  </p>
+                </div>
+              </div>
+              <div className="flex sm:flex-col sm:items-end">
+                <ButtonGroup align="right">
+                  <Button disabled>Share</Button>
+                  <Button onClick={handleDelete(project)}>Delete</Button>
+                  <Link href={project.id} className="primary-button">
+                    View
+                  </Link>
+                </ButtonGroup>
+                <p className="mt-1 text-xs leading-5 text-gray-500">
+                  Last updated by{" "}
+                  {project.lastUpdatedBy?.displayName ?? "Unknown"}
+                  <br />
+                  on {new Date(project.lastUpdatedDatedTs).toLocaleString()}
                 </p>
               </div>
-            </div>
-            <div className="flex sm:flex-col sm:items-end">
-              <ButtonGroup align="right">
-                <Button disabled>Share</Button>
-                <Button disabled>Delete</Button>
-                <Link href={person.id} className="primary-button">
-                  View
-                </Link>
-              </ButtonGroup>
-              <p className="mt-1 text-xs leading-5 text-gray-500">
-                Last updated by {person.lastUpdatedBy?.displayName ?? "Unknown"}
-                <br />
-                on {new Date(person.lastUpdatedDatedTs).toLocaleString()}
-              </p>
-            </div>
-          </li>
-        ))}
+            </li>
+          ))
+        ) : (
+          <div className="my-5 text-center">No projects found.</div>
+        )}
       </ul>
     </div>
   );
