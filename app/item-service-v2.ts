@@ -3,9 +3,11 @@ import {
   deleteDoc,
   doc,
   getDocFromServer,
+  getDocs,
   onSnapshot,
   setDoc,
   Unsubscribe,
+  writeBatch,
 } from "firebase/firestore";
 import { auth, firestoreDb } from "./firebase/config";
 import { SexEnum } from "./components/reactflow/CustomNode";
@@ -28,6 +30,15 @@ function getDoc(userId: string, project: string) {
 function getCol(userId: string) {
   return collection(firestoreDb, userId);
 }
+
+const AUDIT_TRAIL = "auditTrail";
+
+const getAuditDoc = (userId: string, project: string, id: string) => {
+  return doc(firestoreDb, AUDIT_TRAIL, userId, project, id);
+};
+const getAuditCol = (userId: string, project: string) => {
+  return collection(firestoreDb, AUDIT_TRAIL, userId, project);
+};
 
 export async function createRecordIfNotExist(
   userId: string,
@@ -52,7 +63,7 @@ export async function createRecordIfNotExist(
     lastUpdatedDatedTs: Date.now(),
     sharedWith: [],
   } as ProjectRecord;
-  return setDoc(getDoc(userId, project), data, {}).then(() => data);
+  return setDoc(getDoc(userId, project), data).then(() => data);
 }
 
 export async function getRecord(
@@ -86,4 +97,64 @@ export const listenToCollection = (
 
 export async function deleteProject(userId: string, project: string) {
   await deleteDoc(getDoc(userId, project));
+}
+
+export type ProjectAuditTrail = {
+  data: ProjectRecord;
+  updatedTs: number;
+  id: string;
+};
+
+export async function getAuditTrail(
+  userId: string,
+  project: string
+): Promise<ProjectAuditTrail[] | null> {
+  console.log("Fetching...", userId);
+  try {
+    const items = [] as ProjectAuditTrail[];
+    const docSnap = await getDocs(getAuditCol(userId, project));
+    docSnap.forEach((item) => {
+      const data = item.data();
+      data &&
+        items.push({
+          ...data,
+          id: item.id,
+        } as ProjectAuditTrail);
+    });
+    items.sort((a, b) => b.updatedTs - a.updatedTs);
+    return items;
+  } catch (e) {
+    console.error("error", e);
+  }
+  // no record exist
+  return null;
+}
+
+export async function updateProject({
+  userId,
+  project,
+  force,
+  item,
+}: {
+  userId: string;
+  project: string;
+  item: Pick<ProjectRecord, "nodes" | "edges">;
+  force: boolean;
+}): Promise<boolean> {
+  if (!force && item.nodes.length === 0) {
+    return false;
+  }
+  const batch = writeBatch(firestoreDb);
+  batch.update(getDoc(userId, project), item);
+
+  const auditTrail = getAuditDoc(userId, project, Date.now() + "");
+
+  batch.set(auditTrail, {
+    data: item,
+    updatedTs: Date.now(),
+  } as ProjectAuditTrail);
+
+  console.log("Updating...", userId, item);
+  await batch.commit();
+  return true;
 }

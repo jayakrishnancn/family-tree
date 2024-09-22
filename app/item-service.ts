@@ -4,7 +4,6 @@ import {
   getDoc,
   doc,
   writeBatch,
-  getDocs,
   collection,
   updateDoc,
   arrayUnion,
@@ -67,29 +66,29 @@ export async function updateTree(
   return true;
 }
 
-export async function getAuditTrail(
-  userId: string
-): Promise<AuditFirebaseFamilyRecord[] | null> {
-  console.log("Fetching...", userId);
-  try {
-    const items = [] as AuditFirebaseFamilyRecord[];
-    const docSnap = await getDocs(getAuditsRef(userId));
-    docSnap.forEach((item) => {
-      const data = item.data();
-      data &&
-        items.push({
-          ...data,
-          id: item.id,
-        } as AuditFirebaseFamilyRecord);
-    });
-    items.sort((a, b) => b.updatedTs - a.updatedTs);
-    return items;
-  } catch (e) {
-    console.error("error", e);
-  }
-  // no record exist
-  return null;
-}
+// export async function getAuditTrail(
+//   userId: string
+// ): Promise<AuditFirebaseFamilyRecord[] | null> {
+//   console.log("Fetching...", userId);
+//   try {
+//     const items = [] as AuditFirebaseFamilyRecord[];
+//     const docSnap = await getDocs(getAuditsRef(userId));
+//     docSnap.forEach((item) => {
+//       const data = item.data();
+//       data &&
+//         items.push({
+//           ...data,
+//           id: item.id,
+//         } as AuditFirebaseFamilyRecord);
+//     });
+//     items.sort((a, b) => b.updatedTs - a.updatedTs);
+//     return items;
+//   } catch (e) {
+//     console.error("error", e);
+//   }
+//   // no record exist
+//   return null;
+// }
 
 export async function deleteAuditTrail(ids: string[], userId: string) {
   const batch = writeBatch(firestoreDb);

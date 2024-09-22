@@ -3,7 +3,6 @@ import "@xyflow/react/dist/style.css";
 import Flow from "../../components/reactflow/Flow";
 import { Edge, Node, ReactFlowProvider } from "@xyflow/react";
 import { useEffect, useState } from "react";
-import { updateTree } from "../../item-service";
 import useAuth from "../../firebase/useAuth";
 import { auth } from "../../firebase/config";
 import { Bounce, toast, ToastOptions } from "react-toastify";
@@ -11,7 +10,7 @@ import "react-toastify/dist/ReactToastify.min.css";
 import Link from "next/link";
 import Checkbox from "../../components/Checkbox";
 import ShareBoard from "../../components/ShareBoard";
-import { getRecord } from "../../item-service-v2";
+import { getRecord, updateProject } from "../../item-service-v2";
 
 export type NodesAndEdges = {
   nodes: Node[];
@@ -34,7 +33,7 @@ export default function Home({ params }: any) {
   const [data, setData] = useState<NodesAndEdges | null>(null);
   const { user, loading } = useAuth();
   const userId = decodeURIComponent(params.id ?? "") || null;
-  const recordId = decodeURIComponent(params.projectName ?? "") || null;
+  const projectId = decodeURIComponent(params.projectName ?? "") || null;
 
   const [isAutoSaveOn, setIsAutoSaveOn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -42,7 +41,7 @@ export default function Home({ params }: any) {
     nodeAndEdges: NodesAndEdges,
     eventFromAutoSave: boolean
   ) => {
-    if (!recordId || !userId) {
+    if (!projectId || !userId) {
       return;
     }
 
@@ -51,7 +50,12 @@ export default function Home({ params }: any) {
       return;
     }
 
-    updateTree(recordId, nodeAndEdges, !eventFromAutoSave)
+    updateProject({
+      userId,
+      project: projectId,
+      item: nodeAndEdges,
+      force: !eventFromAutoSave,
+    })
       .then((res) => res === true && toast.success("Saved", toastConfigs))
       .catch((error) => {
         console.log(error);
@@ -75,13 +79,13 @@ export default function Home({ params }: any) {
   };
 
   useEffect(() => {
-    if (!recordId || loading || !userId) {
+    if (!projectId || loading || !userId) {
       return;
     }
     setIsLoading(true);
-    getRecord(userId, recordId)
+    getRecord(userId, projectId)
       .then((res) => {
-        console.log(recordId, res, "res");
+        console.log(projectId, res, "res");
         if (res !== null) {
           setData(res);
           return;
@@ -95,7 +99,7 @@ export default function Home({ params }: any) {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [loading, recordId, userId]);
+  }, [loading, projectId, userId]);
 
   if (loading) {
     return "Loading account details...";
@@ -110,7 +114,7 @@ export default function Home({ params }: any) {
   }
 
   return (
-    recordId && (
+    projectId && (
       <div>
         <div className="flex m-4 justify-start">
           <div
@@ -133,8 +137,11 @@ export default function Home({ params }: any) {
             <b>Auto Save {isAutoSaveOn ? "ON" : "OFF"}</b>
           </div>
 
-          <ShareBoard id={recordId} />
-          <Link href="/audit-trail" className="primary-button ">
+          <ShareBoard id={projectId} />
+          <Link
+            href={`/${userId}/${projectId}/audit-trail`}
+            className="primary-button "
+          >
             Audit Trail
           </Link>
           <button className="primary-button" onClick={handleLogout}>

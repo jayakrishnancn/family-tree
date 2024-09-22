@@ -107,6 +107,12 @@ export default function HomePage() {
                   >
                     View
                   </Link>
+                  <Link
+                    href={`/${userId}/${project.id}/audit-trail`}
+                    className="primary-button"
+                  >
+                    Audit trail
+                  </Link>
                 </ButtonGroup>
                 <p className="mt-1 text-xs leading-5 text-gray-500">
                   Last updated by{" "}

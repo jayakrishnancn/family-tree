@@ -1,31 +1,28 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import {
-  AuditFirebaseFamilyRecord,
-  deleteAuditTrail,
-  getAuditTrail,
-  updateTree,
-} from "../item-service";
-import useAuth from "../firebase/useAuth";
+import { deleteAuditTrail, updateTree } from "../../../item-service";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
-import { NodesAndEdges } from "../[id]/[projectName]/page";
+import { NodesAndEdges } from "../page";
 import Link from "next/link";
-import Modal from "../components/reactflow/Modal";
-import Flow from "../components/reactflow/Flow";
+import Modal from "../../../components/reactflow/Modal";
+import Flow from "../../../components/reactflow/Flow";
 import { ReactFlowProvider } from "@xyflow/react";
+import { useSpinnerContext } from "@/app/context/SpinnerContext";
+import { getAuditTrail, ProjectAuditTrail } from "@/app/item-service-v2";
 
-export default function AuditTrail() {
-  const [items, setItems] = useState([] as AuditFirebaseFamilyRecord[]);
-  const [isLoading, setIsLoading] = useState(true);
-  const { user, loading } = useAuth();
-  const userId = user?.uid;
+export default function AuditTrail({ params }: any) {
+  const [items, setItems] = useState([] as ProjectAuditTrail[]);
+  const { setLoading } = useSpinnerContext();
+  const userId = decodeURIComponent(params.id ?? "") || null;
+  const recordId = decodeURIComponent(params.projectName ?? "") || null;
+
   const fetchData = useCallback(() => {
-    if (!userId || loading) {
+    if (!userId || !recordId) {
       return;
     }
-    setIsLoading(true);
-    getAuditTrail(userId)
+    setLoading(true);
+    getAuditTrail(userId, recordId)
       .then((res) => {
         res && setItems(res);
       })
@@ -33,9 +30,9 @@ export default function AuditTrail() {
         toast.error("Error fetching audit taril: " + error.message);
       })
       .finally(() => {
-        setIsLoading(false);
+        setLoading(false);
       });
-  }, [loading, userId]);
+  }, [userId]);
 
   const handleRestore = useCallback(
     (item: NodesAndEdges) => {
@@ -43,7 +40,7 @@ export default function AuditTrail() {
         toast.error("Unknown userid");
         return;
       }
-      setIsLoading(true);
+      setLoading(true);
       updateTree(userId, item, true)
         .then(() => {
           toast.success("Restored");
@@ -53,15 +50,16 @@ export default function AuditTrail() {
           toast.error("Error restoring data" + error);
         })
         .finally(() => {
-          setIsLoading(false);
+          setLoading(false);
           setShowModalData(null);
         });
     },
     [fetchData, userId]
   );
 
-  const [showModalData, setShowModalData] =
-    useState<AuditFirebaseFamilyRecord | null>(null);
+  const [showModalData, setShowModalData] = useState<ProjectAuditTrail | null>(
+    null
+  );
 
   const handleClose = () => {
     setShowModalData(null);
@@ -71,7 +69,7 @@ export default function AuditTrail() {
     if (!userId) {
       return;
     }
-    setIsLoading(true);
+    setLoading(true);
     deleteAuditTrail([id], userId)
       .then(() => {
         toast.warn("Deleted");
@@ -81,7 +79,7 @@ export default function AuditTrail() {
         toast.error("Error deelting data" + error);
       })
       .finally(() => {
-        setIsLoading(false);
+        setLoading(false);
         setShowModalData(null);
       });
   };
@@ -90,12 +88,8 @@ export default function AuditTrail() {
     fetchData();
   }, [fetchData]);
 
-  return loading ? (
-    "Loading auth..."
-  ) : !userId ? (
+  return !userId ? (
     "Unknown user"
-  ) : isLoading ? (
-    "Loading firebase data"
   ) : (
     <div className="w-screen flex justify-center flex-col p-10">
       <div>
