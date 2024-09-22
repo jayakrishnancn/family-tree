@@ -11,7 +11,7 @@ import {
   arrayUnion,
   arrayRemove,
 } from "firebase/firestore";
-import { NodesAndEdges } from "./page";
+import { NodesAndEdges } from "./[id]/page";
 import { Node } from "@xyflow/react";
 import { SexEnum } from "./components/reactflow/CustomNode";
 

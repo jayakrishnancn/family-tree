@@ -26,7 +26,7 @@ import FloatingEdge from "./FloatingEdge";
 import "@xyflow/react/dist/style.css";
 import CustomConnectionLine from "./CustomConnectionLine";
 import useDebounce from "./useDebounce";
-import { NodesAndEdges } from "@/app/page";
+import { NodesAndEdges } from "@/app/[id]/page";
 const DELAY = 10000;
 
 const connectionLineStyle = {

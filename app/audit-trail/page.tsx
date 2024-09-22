@@ -9,7 +9,7 @@ import {
 import useAuth from "../firebase/useAuth";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
-import { NodesAndEdges } from "../page";
+import { NodesAndEdges } from "../[id]/page";
 import Link from "next/link";
 import Modal from "../components/reactflow/Modal";
 import Flow from "../components/reactflow/Flow";
