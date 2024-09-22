@@ -137,7 +137,7 @@ export default function Home({ params }: any) {
             <b>Auto Save {isAutoSaveOn ? "ON" : "OFF"}</b>
           </div>
 
-          <ShareBoard id={projectId} />
+          <ShareBoard userId={userId} projectId={projectId} />
           <Link
             href={`/${userId}/${projectId}/audit-trail`}
             className="primary-button "

@@ -1,4 +1,6 @@
 import {
+  arrayRemove,
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
@@ -7,6 +9,7 @@ import {
   onSnapshot,
   setDoc,
   Unsubscribe,
+  updateDoc,
   writeBatch,
 } from "firebase/firestore";
 import { auth, firestoreDb } from "./firebase/config";
@@ -125,9 +128,8 @@ export async function getAuditTrail(
     return items;
   } catch (e) {
     console.error("error", e);
+    throw e;
   }
-  // no record exist
-  return null;
 }
 
 export async function updateProject({
@@ -157,4 +159,34 @@ export async function updateProject({
   console.log("Updating...", userId, item);
   await batch.commit();
   return true;
+}
+
+export async function addEmailToSharedList({
+  userId,
+  projectId,
+  emailId,
+}: {
+  userId: string;
+  projectId: string;
+  emailId: string;
+}) {
+  const ref = getDoc(userId, projectId);
+  await updateDoc(ref, {
+    sharedWith: arrayUnion(emailId),
+  });
+}
+
+export async function removeEmailToSharedList({
+  userId,
+  projectId,
+  emailId,
+}: {
+  userId: string;
+  projectId: string;
+  emailId: string;
+}) {
+  const ref = getDoc(userId, projectId);
+  await updateDoc(ref, {
+    sharedWith: arrayRemove(emailId),
+  });
 }

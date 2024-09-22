@@ -1,14 +1,6 @@
 import { firestoreDb } from "./firebase/config";
 
-import {
-  getDoc,
-  doc,
-  writeBatch,
-  collection,
-  updateDoc,
-  arrayUnion,
-  arrayRemove,
-} from "firebase/firestore";
+import { getDoc, doc, writeBatch, collection } from "firebase/firestore";
 import { NodesAndEdges } from "./[id]/[projectName]/page";
 
 type FirebaseRecord = NodesAndEdges & {
@@ -94,18 +86,4 @@ export async function deleteAuditTrail(ids: string[], userId: string) {
   const batch = writeBatch(firestoreDb);
   ids.forEach((id) => batch.delete(getAuditRef(userId, id)));
   await batch.commit();
-}
-
-export async function addEmailToSharedList(userId: string, emailId: string) {
-  const ref = getRef(userId);
-  await updateDoc(ref, {
-    allowedEmail: arrayUnion(emailId),
-  });
-}
-
-export async function removeEmailToSharedList(userId: string, emailId: string) {
-  const ref = getRef(userId);
-  await updateDoc(ref, {
-    allowedEmail: arrayRemove(emailId),
-  });
 }

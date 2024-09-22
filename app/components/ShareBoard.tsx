@@ -1,22 +1,29 @@
 "use client";
 
 import { toast } from "react-toastify";
-import { addEmailToSharedList } from "../item-service";
 import { ChangeEvent, useState } from "react";
 import Modal from "./reactflow/Modal";
+import { addEmailToSharedList } from "../item-service-v2";
 
-const getUrl = (id: string) => `https://simple-family-tree.netlify.app/${id}`;
+const getUrl = (userId: string, projectId: string) =>
+  `https://simple-family-tree.netlify.app/${userId}/${projectId}`;
 
-export default function ShareBoard({ id }: { id: string }) {
+export default function ShareBoard({
+  userId,
+  projectId,
+}: {
+  userId: string;
+  projectId: string;
+}) {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [emailId, setEmailId] = useState("");
 
   const handleShare = () => {
     setLoading(true);
-    addEmailToSharedList(id, emailId)
+    addEmailToSharedList({ userId, emailId, projectId })
       .then(() => {
-        navigator && navigator.clipboard.writeText(getUrl(id));
+        navigator && navigator.clipboard.writeText(getUrl(userId, projectId));
         toast.success("Link copied");
       })
       .catch((error) => {
