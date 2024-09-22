@@ -1,28 +1,34 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { deleteAuditTrail, updateTree } from "../../../item-service";
+import { deleteAuditTrail } from "../../../item-service";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import { NodesAndEdges } from "../page";
-import Link from "next/link";
 import Modal from "../../../components/reactflow/Modal";
 import Flow from "../../../components/reactflow/Flow";
 import { ReactFlowProvider } from "@xyflow/react";
 import { useSpinnerContext } from "@/app/context/SpinnerContext";
-import { getAuditTrail, ProjectAuditTrail } from "@/app/item-service-v2";
+import {
+  getAuditTrail,
+  ProjectAuditTrail,
+  updateProject,
+} from "@/app/item-service-v2";
+import Button from "@/app/components/Button";
+import { useRouter } from "next/navigation";
 
 export default function AuditTrail({ params }: any) {
   const [items, setItems] = useState([] as ProjectAuditTrail[]);
   const { setLoading } = useSpinnerContext();
   const userId = decodeURIComponent(params.id ?? "") || null;
-  const recordId = decodeURIComponent(params.projectName ?? "") || null;
+  const projectId = decodeURIComponent(params.projectName ?? "") || null;
+  const router = useRouter();
 
   const fetchData = useCallback(() => {
-    if (!userId || !recordId) {
+    if (!userId || !projectId) {
       return;
     }
     setLoading(true);
-    getAuditTrail(userId, recordId)
+    getAuditTrail(userId, projectId)
       .then((res) => {
         res && setItems(res);
       })
@@ -36,12 +42,17 @@ export default function AuditTrail({ params }: any) {
 
   const handleRestore = useCallback(
     (item: NodesAndEdges) => {
-      if (!userId) {
+      if (!userId || !projectId) {
         toast.error("Unknown userid");
         return;
       }
       setLoading(true);
-      updateTree(userId, item, true)
+      updateProject({
+        userId,
+        project: projectId,
+        item,
+        force: true,
+      })
         .then(() => {
           toast.success("Restored");
           return fetchData();
@@ -92,10 +103,14 @@ export default function AuditTrail({ params }: any) {
     "Unknown user"
   ) : (
     <div className="w-screen flex justify-center flex-col p-10">
-      <div>
-        <Link href="/" className="primary-button rounded">
-          Home
-        </Link>
+      <div className="flex">
+        <Button
+          onClick={() => {
+            router.back();
+          }}
+        >
+          Back
+        </Button>
       </div>
       <div className="flex gap-4 mb-4 justify-center items-center">
         <h2 className="text-2xl font-bold text-center">Audit trail</h2>
