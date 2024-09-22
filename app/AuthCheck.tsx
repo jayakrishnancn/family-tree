@@ -34,10 +34,12 @@ const AuthCheck: FC<PropsWithChildren<AuthCheckProps>> = (props) => {
   ) : showLogin ? (
     <Login />
   ) : (
-    <div>
-      <button className="button-74 text-small" onClick={handleLogout}>
-        Logout - {user?.displayName ?? "Unknown"}
-      </button>
+    <div className="max-w-4xl mx-auto p-4">
+      <div className="flex justify-end p-4">
+        <button className="primary-button text-small" onClick={handleLogout}>
+          Logout - {user?.displayName ?? "Unknown"}
+        </button>
+      </div>
       {props.children}
     </div>
   );

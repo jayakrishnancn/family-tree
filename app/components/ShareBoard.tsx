@@ -50,7 +50,10 @@ export default function ShareBoard({ id }: { id: string }) {
             value={emailId}
             onChange={handleChange}
           />
-          <button className="button-74 round text-sm" onClick={handleShare}>
+          <button
+            className="primary-button round text-sm"
+            onClick={handleShare}
+          >
             Share
           </button>
         </div>
@@ -58,7 +61,7 @@ export default function ShareBoard({ id }: { id: string }) {
 
       <button
         disabled={loading}
-        className="button-74 flex flex–col gap-1"
+        className="primary-button flex flex–col gap-1"
         onClick={() => setOpen(true)}
       >
         Share

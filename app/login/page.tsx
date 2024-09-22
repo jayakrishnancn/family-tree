@@ -26,7 +26,7 @@ const Login = () => {
     <div className="w-screen h-screen flex justify-center items-center">
       <button
         disabled={loading}
-        className="button-74 round"
+        className="primary-button round"
         onClick={handleLogin}
       >
         Sign in with Google

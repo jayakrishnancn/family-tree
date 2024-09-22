@@ -122,7 +122,7 @@ export default function Home({ params }: { params: { id?: string } }) {
     <div>
       <div className="flex m-4 justify-start">
         <div
-          className="button-74 flex items-center gap-4"
+          className="primary-button flex items-center gap-4"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -142,10 +142,10 @@ export default function Home({ params }: { params: { id?: string } }) {
         </div>
 
         <ShareBoard id={recordId} />
-        <Link href="/audit-trail" className="button-74 ">
+        <Link href="/audit-trail" className="primary-button ">
           Audit Trail
         </Link>
-        <button className="button-74" onClick={handleLogout}>
+        <button className="primary-button" onClick={handleLogout}>
           Logout - {user?.displayName ?? "Unknown"}
         </button>
       </div>

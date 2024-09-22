@@ -40,22 +40,8 @@ div.customHandle.target {
 }
 
 
-
-/* div.customHandle {
-  width: 100%;
-  height: 100%;
-  background: blue;
-  position: absolute;
-  top: 0;
-  left: 0;
-  border-radius: 0;
-  transform: none;
-  border: none;
-  opacity: 0;
-} */
-
 /* CSS */
-.button-74 {
+.primary-button {
   background-color: #fbeee0;
   border: 2px solid #422800;
   border-radius: 0;
@@ -64,48 +50,58 @@ div.customHandle.target {
   cursor: pointer;
   display: inline-block;
   font-weight: 600;
-  font-size: 18px;
-  padding: 0 18px;
-  line-height: 50px;
+  font-size: 14px;
   text-align: center;
-  text-decoration: none;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
+  border-radius: 20px;
+  min-width: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.button-74:first-child {
+
+.button-grp{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-grp  .primary-button {
+  border-radius: 0;
+  border-right-width: 0;
+}
+
+.button-grp  .primary-button:first-child {
   border-radius: 30px 0 0 30px;
 }
-.button-74:last-child {
+.button-grp  .primary-button:last-child {
   border-radius: 0 30px 30px 0;
+  border-right-width: 2px;
 }
 
-
-.button-74:only-child{
+.button-grp  .primary-button:only-child{
   border-radius: 30px;
 }
 
-.button-74:hover {
+.primary-button:hover {
   background-color: #e7b6ef;
   border-color: #673ab7;
   color: #000;
   box-shadow: #490d99 4px 4px 0 0;
 }
 
-.button-74:active{
+.primary-button:active{
   box-shadow: #422800 2px 2px 0 0;
   transform: translate(2px, 2px);
 }
-.button-74:disabled{
+.primary-button:disabled{
   background-color: #999;
   pointer-events: none;
 }
 
 @media (min-width: 768px) {
-  .button-74 {
-    min-width: 120px;
-    padding: 0 25px;
+  .primary-button {
+    padding: 2px 10px;
   }
 }
 
@@ -117,7 +113,7 @@ img.pic {
   border: 2px solid #000;
   cursor: default;
 }
-button.button-74.round{
+button.primary-button.round{
   border-radius: 30px !important;
   border-left-width: 2px !important;
   border-right-width: 6px !important; 

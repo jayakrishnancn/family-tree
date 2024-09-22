@@ -162,10 +162,10 @@ const Flow = ({
       <MiniMap />
       {showPanel && (
         <Panel position="top-right">
-          <button className="button-74" onClick={onSave}>
+          <button className="primary-button" onClick={onSave}>
             save
           </button>
-          <button className="button-74" onClick={onAdd}>
+          <button className="primary-button" onClick={onAdd}>
             add node
           </button>
         </Panel>

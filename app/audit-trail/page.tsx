@@ -99,7 +99,7 @@ export default function AuditTrail() {
   ) : (
     <div className="w-screen flex justify-center flex-col p-10">
       <div>
-        <Link href="/" className="button-74 rounded">
+        <Link href="/" className="primary-button rounded">
           Home
         </Link>
       </div>
@@ -135,7 +135,7 @@ export default function AuditTrail() {
                   <div>
                     <button
                       disabled={index === 0}
-                      className="button-74 flex-1 text-sm"
+                      className="primary-button flex-1 text-sm"
                       onClick={() => {
                         handleRestore(item.data);
                       }}
@@ -145,7 +145,7 @@ export default function AuditTrail() {
 
                     <button
                       disabled={index === 0}
-                      className="button-74 flex-1 text-sm"
+                      className="primary-button flex-1 text-sm"
                       onClick={() => {
                         deleteItem(item.id);
                       }}
@@ -153,7 +153,7 @@ export default function AuditTrail() {
                       Delete
                     </button>
                     <button
-                      className="button-74 flex-1 text-sm"
+                      className="primary-button flex-1 text-sm"
                       onClick={() => {
                         setShowModalData(item);
                       }}
@@ -170,7 +170,7 @@ export default function AuditTrail() {
       <ReactFlowProvider>
         <Modal show={showModalData} onClose={handleClose}>
           <button
-            className="button-74  round text-sm"
+            className="primary-button  round text-sm"
             onClick={() => {
               showModalData?.data && handleRestore(showModalData.data);
             }}
