@@ -57,6 +57,13 @@ div.customHandle.target {
   display: flex;
   justify-content: center;
   align-items: center;
+  outline: none;
+}
+.primary-button:active, .primary-button:focus{
+  background-color: #936dd5;
+  border-color: #673ab7;
+  color: #000;
+  box-shadow: #490d99 4px 4px 0 0;
 }
 
 

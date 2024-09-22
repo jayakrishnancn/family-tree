@@ -18,8 +18,8 @@ const projects = [
 
 export default function HomePage() {
   return (
-    <div className="mx-auto border rounded p-4">
-      <div className="flex justify-between">
+    <div className="mx-auto border rounded-md p-4">
+      <div className="flex justify-between border-b pb-4">
         <h1 className="text-2xl font-bold leading-7 text-gray-900 ">
           Projects
         </h1>
