@@ -38,7 +38,7 @@ export default function AuditTrail({ params }: any) {
       .finally(() => {
         setLoading(false);
       });
-  }, [userId]);
+  }, [projectId, setLoading, userId]);
 
   const handleRestore = useCallback(
     (item: NodesAndEdges) => {
@@ -65,7 +65,7 @@ export default function AuditTrail({ params }: any) {
           setShowModalData(null);
         });
     },
-    [fetchData, userId]
+    [fetchData, projectId, setLoading, userId]
   );
 
   const [showModalData, setShowModalData] = useState<ProjectAuditTrail | null>(

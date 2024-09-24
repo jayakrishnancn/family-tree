@@ -10,7 +10,7 @@ import "react-toastify/dist/ReactToastify.min.css";
 import Link from "next/link";
 import Checkbox from "../../components/Checkbox";
 import ShareBoard from "../../components/ShareBoard";
-import { getRecord, updateProject } from "../../item-service-v2";
+import { listenToProject, updateProject } from "../../item-service-v2";
 
 export type NodesAndEdges = {
   nodes: Node[];
@@ -34,6 +34,7 @@ export default function Home({ params }: any) {
   const { user, loading } = useAuth();
   const userId = decodeURIComponent(params.id ?? "") || null;
   const projectId = decodeURIComponent(params.projectName ?? "") || null;
+  const [error, setError] = useState<string | null>(null);
 
   const [isAutoSaveOn, setIsAutoSaveOn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -49,6 +50,7 @@ export default function Home({ params }: any) {
       console.log("autosave disabled");
       return;
     }
+    setError(null);
 
     updateProject({
       userId,
@@ -59,6 +61,7 @@ export default function Home({ params }: any) {
       .then((res) => res === true && toast.success("Saved", toastConfigs))
       .catch((error) => {
         console.log(error);
+        setError(error);
         toast.error("Error: " + (error?.message ?? "unknown error"));
       });
   };
@@ -79,26 +82,25 @@ export default function Home({ params }: any) {
   };
 
   useEffect(() => {
-    if (!projectId || loading || !userId) {
+    if (!userId || !projectId || loading) {
       return;
     }
+    setError(null);
     setIsLoading(true);
-    getRecord(userId, projectId)
-      .then((res) => {
-        console.log(projectId, res, "res");
-        if (res !== null) {
-          setData(res);
-          return;
-        }
-      })
-      .catch((error) => {
-        console.log(error);
+    listenToProject(
+      userId,
+      projectId,
+      (data) => {
+        console.log(projectId, "data", data);
+        setData(data ?? null);
         setIsLoading(false);
-        toast.error("Error" + (error?.message ?? "unknown error"));
-      })
-      .finally(() => {
+      },
+      (error) => {
+        setError(error + "");
+        setData(null);
         setIsLoading(false);
-      });
+      }
+    );
   }, [loading, projectId, userId]);
 
   if (loading) {
@@ -107,6 +109,10 @@ export default function Home({ params }: any) {
 
   if (isLoading) {
     return "Loading data...";
+  }
+
+  if (error) {
+    return "Error: " + error;
   }
 
   if (!data || !userId) {
@@ -159,6 +165,7 @@ export default function Home({ params }: any) {
         >
           <ReactFlowProvider>
             <Flow
+              key={JSON.stringify(data)}
               showPanel
               initialEdges={data.edges}
               initialNodes={data.nodes}

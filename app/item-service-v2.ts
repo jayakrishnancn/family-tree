@@ -4,6 +4,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  FirestoreError,
   getDocFromServer,
   getDocs,
   onSnapshot,
@@ -96,6 +97,23 @@ export const listenToCollection = (
     data.sort((a, b) => b.lastUpdatedDatedTs - a.lastUpdatedDatedTs);
     callback(data);
   });
+};
+
+export const listenToProject = (
+  userId: string,
+  projectId: string,
+  callback: (data?: ProjectRecord) => void,
+  callbackError?: (error: FirestoreError) => void
+): Unsubscribe => {
+  const ref = getDoc(userId, projectId);
+  return onSnapshot(
+    ref,
+    (snapshot) => {
+      const data = snapshot.data() as ProjectRecord;
+      callback(data);
+    },
+    callbackError
+  );
 };
 
 export async function deleteProject(userId: string, project: string) {
