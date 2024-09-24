@@ -58,6 +58,7 @@ div.customHandle.target {
   justify-content: center;
   align-items: center;
   outline: none;
+  padding: 2px 5px;
 }
 .primary-button:active, .primary-button:focus{
   background-color: #936dd5;

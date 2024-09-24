@@ -11,6 +11,7 @@ import Link from "next/link";
 import Checkbox from "../../components/Checkbox";
 import ShareBoard from "../../components/ShareBoard";
 import { listenToProject, updateProject } from "../../item-service-v2";
+import { deepEqual } from "@/app/utils/deepEqual";
 
 export type NodesAndEdges = {
   nodes: Node[];
@@ -51,12 +52,21 @@ export default function Home({ params }: any) {
       return;
     }
     setError(null);
+    if (
+      deepEqual(
+        { edges: data?.edges, nodes: data?.nodes } as NodesAndEdges,
+        nodeAndEdges
+      )
+    ) {
+      return;
+    }
 
     updateProject({
-      userId,
+      projectId: userId,
       project: projectId,
       item: nodeAndEdges,
       force: !eventFromAutoSave,
+      emailId: user?.email,
     })
       .then((res) => res === true && toast.success("Saved", toastConfigs))
       .catch((error) => {

@@ -48,7 +48,7 @@ export default function AuditTrail({ params }: any) {
       }
       setLoading(true);
       updateProject({
-        userId,
+        projectId: userId,
         project: projectId,
         item,
         force: true,

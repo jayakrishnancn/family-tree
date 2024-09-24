@@ -124,6 +124,7 @@ export type ProjectAuditTrail = {
   data: ProjectRecord;
   updatedTs: number;
   id: string;
+  updatedBy?: string | null;
 };
 
 export async function getAuditTrail(
@@ -151,30 +152,33 @@ export async function getAuditTrail(
 }
 
 export async function updateProject({
-  userId,
+  projectId,
   project,
   force,
   item,
+  emailId,
 }: {
-  userId: string;
+  projectId: string;
   project: string;
   item: Pick<ProjectRecord, "nodes" | "edges">;
   force: boolean;
+  emailId?: string | null;
 }): Promise<boolean> {
   if (!force && item.nodes.length === 0) {
     return false;
   }
   const batch = writeBatch(firestoreDb);
-  batch.update(getDoc(userId, project), item);
+  batch.update(getDoc(projectId, project), item);
 
-  const auditTrail = getAuditDoc(userId, project, Date.now() + "");
+  const auditTrail = getAuditDoc(projectId, project, Date.now() + "");
 
   batch.set(auditTrail, {
     data: item,
     updatedTs: Date.now(),
+    updatedBy: emailId,
   } as ProjectAuditTrail);
 
-  console.log("Updating...", userId, item);
+  console.log("Updating...", projectId, item);
   await batch.commit();
   return true;
 }
