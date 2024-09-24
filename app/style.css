@@ -198,12 +198,12 @@ body > section {
 }
 
 .switch input:checked ~ label {
-  border-color: #000;
+  border-color: green;
 }
 
 .switch input:checked ~ label::after {
   translate: 30px 0;
-  background: #000;
+  background: green;
 }
 
 .switch input:disabled ~ label {

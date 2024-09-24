@@ -13,6 +13,7 @@ import { listenToProject, updateProject } from "../../item-service-v2";
 import { deepEqual } from "@/app/utils/deepEqual";
 import ButtonGroup from "@/app/components/ButtonGroup";
 import { ProjectRecord } from "@/app/types/proejct";
+import { FaHistory } from "react-icons/fa";
 
 export type NodesAndEdges = {
   nodes: Node[];
@@ -156,9 +157,9 @@ export default function Home({ params }: any) {
             />
             <Link
               href={`/${userId}/${projectId}/audit-trail`}
-              className="primary-button "
+              className="primary-button gap-1 flex "
             >
-              Audit Trail
+              <FaHistory /> Audit Trail
             </Link>
           </ButtonGroup>
         </div>

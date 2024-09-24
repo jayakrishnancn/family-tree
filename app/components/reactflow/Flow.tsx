@@ -29,6 +29,8 @@ import useDebounce from "./useDebounce";
 import { NodesAndEdges } from "@/app/[id]/[projectName]/page";
 import ButtonGroup from "../ButtonGroup";
 import Button from "../Button";
+import { BiSave } from "react-icons/bi";
+import { CgAdd } from "react-icons/cg";
 const DELAY = 10000;
 
 const connectionLineStyle = {
@@ -165,8 +167,12 @@ const Flow = ({
       {showPanel && (
         <Panel position="top-right">
           <ButtonGroup>
-            <Button onClick={onAdd}>Add node</Button>
-            <Button onClick={onSave}>Save</Button>
+            <Button onClick={onAdd} startIcon={<CgAdd />}>
+              Add node
+            </Button>
+            <Button onClick={onSave} startIcon={<BiSave />}>
+              Save
+            </Button>
           </ButtonGroup>
         </Panel>
       )}

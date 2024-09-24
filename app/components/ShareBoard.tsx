@@ -8,7 +8,7 @@ import {
   removeEmailToSharedList,
 } from "../item-service-v2";
 import Button from "./Button";
-import { BiTrash } from "react-icons/bi";
+import { BiShareAlt, BiTrash } from "react-icons/bi";
 
 const getUrl = (userId: string, projectId: string) =>
   `https://simple-family-tree.netlify.app/${userId}/${projectId}`;
@@ -110,6 +110,7 @@ export default function ShareBoard({
         disabled={loading}
         className="primary-button flex flex–col gap-1"
         onClick={() => setOpen(true)}
+        startIcon={<BiShareAlt />}
       >
         Share
       </Button>
