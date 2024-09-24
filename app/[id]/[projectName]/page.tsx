@@ -2,7 +2,7 @@
 import "@xyflow/react/dist/style.css";
 import Flow from "../../components/reactflow/Flow";
 import { Edge, Node, ReactFlowProvider } from "@xyflow/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useAuth from "../../firebase/useAuth";
 import { Bounce, toast, ToastOptions } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
@@ -12,6 +12,7 @@ import ShareBoard from "../../components/ShareBoard";
 import { listenToProject, updateProject } from "../../item-service-v2";
 import { deepEqual } from "@/app/utils/deepEqual";
 import ButtonGroup from "@/app/components/ButtonGroup";
+import { ProjectRecord } from "@/app/types/proejct";
 
 export type NodesAndEdges = {
   nodes: Node[];
@@ -31,7 +32,7 @@ export const toastConfigs = {
 } as ToastOptions;
 
 export default function Home({ params }: any) {
-  const [data, setData] = useState<NodesAndEdges | null>(null);
+  const [data, setData] = useState<ProjectRecord | null>(null);
   const { user, loading } = useAuth();
   const userId = decodeURIComponent(params.id ?? "") || null;
   const projectId = decodeURIComponent(params.projectName ?? "") || null;
@@ -64,7 +65,14 @@ export default function Home({ params }: any) {
     updateProject({
       projectId: userId,
       project: projectId,
-      item: nodeAndEdges,
+      item: {
+        ...nodeAndEdges,
+        lastUpdatedBy: {
+          uid: user?.uid ?? "unknown",
+          displayName: user?.displayName ?? "unknown",
+        },
+        lastUpdatedDatedTs: Date.now(),
+      },
       force: !eventFromAutoSave,
       emailId: user?.email,
     })
@@ -97,6 +105,8 @@ export default function Home({ params }: any) {
       }
     );
   }, [loading, projectId, userId]);
+
+  const dataChecksum = useMemo(() => JSON.stringify(data), [data]);
 
   if (loading) {
     return "Loading account details...";
@@ -139,7 +149,11 @@ export default function Home({ params }: any) {
               <b>Auto Save {isAutoSaveOn ? "ON" : "OFF"}</b>
             </div>
 
-            <ShareBoard userId={userId} projectId={projectId} />
+            <ShareBoard
+              userId={userId}
+              projectId={projectId}
+              sharedWith={data.sharedWith}
+            />
             <Link
               href={`/${userId}/${projectId}/audit-trail`}
               className="primary-button "
@@ -159,7 +173,7 @@ export default function Home({ params }: any) {
         >
           <ReactFlowProvider>
             <Flow
-              key={JSON.stringify(data)}
+              key={dataChecksum}
               showPanel
               initialEdges={data.edges}
               initialNodes={data.nodes}

@@ -6,7 +6,9 @@ const Modal = ({ show, onClose, children }: any) => {
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        onClose();
+        if (onClose) {
+          onClose();
+        }
       }
     },
     [onClose]

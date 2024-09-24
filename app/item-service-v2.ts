@@ -81,6 +81,22 @@ export async function getRecord(
   return null;
 }
 
+export async function getRecords(
+  userId: string
+): Promise<ProjectRecord[] | null> {
+  const snapshot = await getDocs(getCol(userId));
+  const data = snapshot.docs.map((doc) => {
+    const docData = doc.data() as ProjectRecord;
+    return {
+      ...docData,
+      id: doc.id,
+      name: docData.name ?? doc.id,
+    } as ProjectRecord;
+  });
+  data.sort((a, b) => b.lastUpdatedDatedTs - a.lastUpdatedDatedTs);
+  return data;
+}
+
 export const listenToCollection = (
   userId: string,
   callback: (data: ProjectRecord[]) => void
@@ -160,7 +176,10 @@ export async function updateProject({
 }: {
   projectId: string;
   project: string;
-  item: Pick<ProjectRecord, "nodes" | "edges">;
+  item: Pick<
+    ProjectRecord,
+    "nodes" | "edges" | "lastUpdatedBy" | "lastUpdatedDatedTs"
+  >;
   force: boolean;
   emailId?: string | null;
 }): Promise<boolean> {
@@ -207,8 +226,9 @@ export async function removeEmailToSharedList({
   projectId: string;
   emailId: string;
 }) {
+  debugger;
   const ref = getDoc(userId, projectId);
   await updateDoc(ref, {
-    sharedWith: arrayRemove(emailId),
+    sharedWith: arrayRemove(emailId.trim()),
   });
 }

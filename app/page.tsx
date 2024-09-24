@@ -12,6 +12,7 @@ import { deleteProject, listenToCollection } from "./item-service-v2";
 import { ProjectRecord } from "./types/proejct";
 import { toast } from "react-toastify";
 import { useSpinnerContext } from "./context/SpinnerContext";
+import ShareBoard from "./components/ShareBoard";
 
 export default function HomePage() {
   const { user } = useAuth();
@@ -99,7 +100,11 @@ export default function HomePage() {
               </div>
               <div className="flex sm:flex-col sm:items-end">
                 <ButtonGroup align="right">
-                  <Button disabled>Share</Button>
+                  <ShareBoard
+                    userId={userId}
+                    projectId={project.id}
+                    sharedWith={project.sharedWith ?? []}
+                  />
                   <Button onClick={handleDelete(project)}>Delete</Button>
                   <Link
                     href={`/${userId}/${project.id}`}

@@ -3,7 +3,12 @@
 import { toast } from "react-toastify";
 import { ChangeEvent, useState } from "react";
 import Modal from "./reactflow/Modal";
-import { addEmailToSharedList } from "../item-service-v2";
+import {
+  addEmailToSharedList,
+  removeEmailToSharedList,
+} from "../item-service-v2";
+import Button from "./Button";
+import { BiTrash } from "react-icons/bi";
 
 const getUrl = (userId: string, projectId: string) =>
   `https://simple-family-tree.netlify.app/${userId}/${projectId}`;
@@ -11,9 +16,11 @@ const getUrl = (userId: string, projectId: string) =>
 export default function ShareBoard({
   userId,
   projectId,
+  sharedWith,
 }: {
   userId: string;
   projectId: string;
+  sharedWith: string[];
 }) {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -32,12 +39,25 @@ export default function ShareBoard({
       })
       .finally(() => {
         setLoading(false);
-        setOpen(false);
       });
   };
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     setEmailId(event.target.value);
   }
+  const handleRemoveShare = (emailId: string) => {
+    setLoading(true);
+    removeEmailToSharedList({ userId, emailId, projectId })
+      .then(() => {
+        toast.success(`Removed emailId: ${emailId} from share list`);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(`Error while removing email Id ${emailId} to shared List`);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   return (
     <>
@@ -63,16 +83,36 @@ export default function ShareBoard({
           >
             Share
           </button>
+          {sharedWith?.length > 0 ? (
+            <div>
+              <hr className="mt-4 border-2 border-black" />
+              <h3 className="font-bold text-center">Shared with</h3>
+              <div className="flex flex-col">
+                {sharedWith.map((emailId) => (
+                  <div className="flex my-1" key={emailId}>
+                    <div className="primary-button flex-1  no-button px-2">
+                      {emailId}
+                    </div>
+                    <Button onClick={() => handleRemoveShare(emailId)}>
+                      <BiTrash />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="text-center mt-4">not shared with anyone yet.</div>
+          )}
         </div>
       </Modal>
 
-      <button
+      <Button
         disabled={loading}
         className="primary-button flex flex–col gap-1"
         onClick={() => setOpen(true)}
       >
         Share
-      </button>
+      </Button>
     </>
   );
 }

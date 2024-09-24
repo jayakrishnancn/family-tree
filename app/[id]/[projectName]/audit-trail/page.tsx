@@ -15,6 +15,7 @@ import {
 } from "@/app/item-service-v2";
 import Button from "@/app/components/Button";
 import { useRouter } from "next/navigation";
+import useAuth from "@/app/firebase/useAuth";
 
 export default function AuditTrail({ params }: any) {
   const [items, setItems] = useState([] as ProjectAuditTrail[]);
@@ -22,6 +23,7 @@ export default function AuditTrail({ params }: any) {
   const userId = decodeURIComponent(params.id ?? "") || null;
   const projectId = decodeURIComponent(params.projectName ?? "") || null;
   const router = useRouter();
+  const { user } = useAuth();
 
   const fetchData = useCallback(() => {
     if (!userId || !projectId) {
@@ -50,7 +52,14 @@ export default function AuditTrail({ params }: any) {
       updateProject({
         projectId: userId,
         project: projectId,
-        item,
+        item: {
+          ...item,
+          lastUpdatedBy: {
+            uid: user?.uid ?? "unknown",
+            displayName: user?.displayName ?? "unknown",
+          },
+          lastUpdatedDatedTs: Date.now(),
+        },
         force: true,
       })
         .then(() => {
