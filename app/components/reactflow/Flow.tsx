@@ -27,6 +27,8 @@ import "@xyflow/react/dist/style.css";
 import CustomConnectionLine from "./CustomConnectionLine";
 import useDebounce from "./useDebounce";
 import { NodesAndEdges } from "@/app/[id]/[projectName]/page";
+import ButtonGroup from "../ButtonGroup";
+import Button from "../Button";
 const DELAY = 10000;
 
 const connectionLineStyle = {
@@ -162,12 +164,10 @@ const Flow = ({
       <MiniMap />
       {showPanel && (
         <Panel position="top-right">
-          <button className="primary-button" onClick={onSave}>
-            save
-          </button>
-          <button className="primary-button" onClick={onAdd}>
-            add node
-          </button>
+          <ButtonGroup>
+            <Button onClick={onAdd}>Add node</Button>
+            <Button onClick={onSave}>Save</Button>
+          </ButtonGroup>
         </Panel>
       )}
     </ReactFlow>

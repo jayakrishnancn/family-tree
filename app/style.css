@@ -59,6 +59,7 @@ div.customHandle.target {
   align-items: center;
   outline: none;
   padding: 2px 5px;
+  align-self: stretch;
 }
 .primary-button:active, .primary-button:focus{
   background-color: #936dd5;
@@ -167,7 +168,6 @@ body > section {
 .switch label {
   display: block;
   width: 60px;
-  height: 30px;
   padding: 3px;
   border-radius: 15px;
   border: 2px solid #000;
@@ -179,7 +179,7 @@ body > section {
   content: "";
   display: inherit;
   width: 20px;
-  height: 20px;
+  height: 10px;
   border-radius: 12px;
   background: #000;
   transition: 0.3s;

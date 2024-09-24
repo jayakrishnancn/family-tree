@@ -4,7 +4,6 @@ import Flow from "../../components/reactflow/Flow";
 import { Edge, Node, ReactFlowProvider } from "@xyflow/react";
 import { useEffect, useState } from "react";
 import useAuth from "../../firebase/useAuth";
-import { auth } from "../../firebase/config";
 import { Bounce, toast, ToastOptions } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import Link from "next/link";
@@ -12,6 +11,7 @@ import Checkbox from "../../components/Checkbox";
 import ShareBoard from "../../components/ShareBoard";
 import { listenToProject, updateProject } from "../../item-service-v2";
 import { deepEqual } from "@/app/utils/deepEqual";
+import ButtonGroup from "@/app/components/ButtonGroup";
 
 export type NodesAndEdges = {
   nodes: Node[];
@@ -76,21 +76,6 @@ export default function Home({ params }: any) {
       });
   };
 
-  const handleLogout = (): void => {
-    auth
-      .signOut()
-      .then((res) => {
-        console.log("User signed out", res);
-        toast.success("Signed out", toastConfigs);
-      })
-      .catch((error) => {
-        // An error happened.
-        console.error("Error signing out: ", error);
-
-        toast.error("Error signing out:" + (error?.message ?? "unknown error"));
-      });
-  };
-
   useEffect(() => {
     if (!userId || !projectId || loading) {
       return;
@@ -132,37 +117,36 @@ export default function Home({ params }: any) {
   return (
     projectId && (
       <div>
-        <div className="flex m-4 justify-start">
-          <div
-            className="primary-button flex items-center gap-4"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setIsAutoSaveOn((prev) => !prev);
-            }}
-          >
-            <Checkbox
-              id="auto-save"
-              isChecked={isAutoSaveOn}
-              onChange={(e) => {
+        <div className="flex m-4 flex-wrap justify-start gap-2">
+          <ButtonGroup align="left">
+            <div
+              className="primary-button flex items-center gap-4"
+              onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 setIsAutoSaveOn((prev) => !prev);
               }}
-            />
-            <b>Auto Save {isAutoSaveOn ? "ON" : "OFF"}</b>
-          </div>
+            >
+              <Checkbox
+                id="auto-save"
+                isChecked={isAutoSaveOn}
+                onChange={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsAutoSaveOn((prev) => !prev);
+                }}
+              />
+              <b>Auto Save {isAutoSaveOn ? "ON" : "OFF"}</b>
+            </div>
 
-          <ShareBoard userId={userId} projectId={projectId} />
-          <Link
-            href={`/${userId}/${projectId}/audit-trail`}
-            className="primary-button "
-          >
-            Audit Trail
-          </Link>
-          <button className="primary-button" onClick={handleLogout}>
-            Logout - {user?.displayName ?? "Unknown"}
-          </button>
+            <ShareBoard userId={userId} projectId={projectId} />
+            <Link
+              href={`/${userId}/${projectId}/audit-trail`}
+              className="primary-button "
+            >
+              Audit Trail
+            </Link>
+          </ButtonGroup>
         </div>
 
         <div

@@ -1,7 +1,7 @@
 import { FC, PropsWithChildren } from "react";
 
 interface ButtonGroupProps {
-  align: "center" | "left" | "right";
+  align?: "center" | "left" | "right";
 }
 
 const ButtonGroup: FC<PropsWithChildren<ButtonGroupProps>> = ({
