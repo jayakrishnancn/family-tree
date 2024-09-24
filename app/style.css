@@ -42,11 +42,7 @@ div.customHandle.target {
 
 /* CSS */
 .primary-button {
-  background-color: #fbeee0;
-  border: 2px solid #422800;
   border-radius: 0;
-  box-shadow: #422800 4px 4px 0 0;
-  color: #422800;
   cursor: pointer;
   display: inline-block;
   font-weight: 600;
@@ -60,7 +56,23 @@ div.customHandle.target {
   outline: none;
   padding: 2px 5px;
   align-self: stretch;
+  background-color: #fbeee0;
+  border: 2px solid #422800;
+  box-shadow: #422800 4px 4px 0 0;
+  color: #422800;
 }
+
+.primary-button.no-button:active,
+.primary-button.no-button:hover{
+  background-color: #fbeee0;
+  border: 2px solid #422800;
+  box-shadow: #422800 4px 4px 0 0;
+  color: #422800;
+  border-right:   0;
+  cursor: default;
+  transform: translate(0);
+}
+
 .primary-button:active, .primary-button:focus{
   background-color: #936dd5;
   border-color: #673ab7;
