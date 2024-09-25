@@ -167,6 +167,16 @@ export async function getAuditTrail(
   }
 }
 
+export async function deleteAuditTrail(
+  userId: string,
+  projectId: string,
+  auditIds: string[]
+) {
+  const batch = writeBatch(firestoreDb);
+  auditIds.forEach((id) => batch.delete(getAuditDoc(userId, projectId, id)));
+  await batch.commit();
+}
+
 export async function updateProject({
   projectId,
   project,
@@ -202,6 +212,8 @@ export async function updateProject({
   return true;
 }
 
+//share list
+
 export async function addEmailToSharedList({
   userId,
   projectId,
@@ -213,7 +225,7 @@ export async function addEmailToSharedList({
 }) {
   const ref = getDoc(userId, projectId);
   await updateDoc(ref, {
-    sharedWith: arrayUnion(emailId),
+    sharedWith: arrayUnion(emailId.toLowerCase()),
   });
 }
 
@@ -229,6 +241,6 @@ export async function removeEmailToSharedList({
   debugger;
   const ref = getDoc(userId, projectId);
   await updateDoc(ref, {
-    sharedWith: arrayRemove(emailId.trim()),
+    sharedWith: arrayRemove(emailId.trim().toLowerCase()),
   });
 }

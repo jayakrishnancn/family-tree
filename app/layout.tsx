@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import "./style.css";
-import { ToastContainer } from "react-toastify";
 import AuthCheck from "./AuthCheck";
 import { SpinnerProvider } from "./context/SpinnerContext";
 
@@ -32,7 +31,6 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ToastContainer />
         <SpinnerProvider>
           <AuthCheck>{children}</AuthCheck>
         </SpinnerProvider>

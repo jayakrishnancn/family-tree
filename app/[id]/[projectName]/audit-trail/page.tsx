@@ -1,6 +1,5 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { deleteAuditTrail } from "../../../item-service";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import { NodesAndEdges } from "../page";
@@ -9,6 +8,7 @@ import Flow from "../../../components/reactflow/Flow";
 import { ReactFlowProvider } from "@xyflow/react";
 import { useSpinnerContext } from "@/app/context/SpinnerContext";
 import {
+  deleteAuditTrail,
   getAuditTrail,
   ProjectAuditTrail,
   updateProject,
@@ -16,6 +16,9 @@ import {
 import Button from "@/app/components/Button";
 import { useRouter } from "next/navigation";
 import useAuth from "@/app/firebase/useAuth";
+import ButtonGroup from "@/app/components/ButtonGroup";
+import ConfirmModal from "@/app/components/ConfirmButton";
+import { toastConfigs } from "@/app/utils/toast";
 
 export default function AuditTrail({ params }: any) {
   const [items, setItems] = useState([] as ProjectAuditTrail[]);
@@ -35,7 +38,10 @@ export default function AuditTrail({ params }: any) {
         res && setItems(res);
       })
       .catch((error) => {
-        toast.error("Error fetching audit taril: " + error.message);
+        toast.error(
+          "Error fetching audit taril: " + error.message,
+          toastConfigs
+        );
       })
       .finally(() => {
         setLoading(false);
@@ -45,7 +51,7 @@ export default function AuditTrail({ params }: any) {
   const handleRestore = useCallback(
     (item: NodesAndEdges) => {
       if (!userId || !projectId) {
-        toast.error("Unknown userid");
+        toast.error("Unknown userid", toastConfigs);
         return;
       }
       setLoading(true);
@@ -63,18 +69,18 @@ export default function AuditTrail({ params }: any) {
         force: true,
       })
         .then(() => {
-          toast.success("Restored");
+          toast.success("Restored", toastConfigs);
           return fetchData();
         })
         .catch((error) => {
-          toast.error("Error restoring data" + error);
+          toast.error("Error restoring data" + error, toastConfigs);
         })
         .finally(() => {
           setLoading(false);
           setShowModalData(null);
         });
     },
-    [fetchData, projectId, setLoading, userId]
+    [fetchData, projectId, setLoading, user?.displayName, user?.uid, userId]
   );
 
   const [showModalData, setShowModalData] = useState<ProjectAuditTrail | null>(
@@ -86,17 +92,17 @@ export default function AuditTrail({ params }: any) {
   };
 
   const deleteItem = (id: string) => {
-    if (!userId) {
+    if (!userId || !projectId) {
       return;
     }
     setLoading(true);
-    deleteAuditTrail([id], userId)
+    deleteAuditTrail(userId, projectId, [id])
       .then(() => {
-        toast.warn("Deleted");
+        toast.error("Deleted Audit trail", toastConfigs);
         return fetchData();
       })
       .catch((error) => {
-        toast.error("Error deelting data" + error);
+        toast.error("Error deelting data" + error, toastConfigs);
       })
       .finally(() => {
         setLoading(false);
@@ -144,41 +150,44 @@ export default function AuditTrail({ params }: any) {
               </td>
             </tr>
           ) : (
-            items.map((item, index) => (
-              <tr key={item.id}>
+            items.map((autitTrailRecord, index) => (
+              <tr key={autitTrailRecord.id}>
                 <td className="border  border-2 p-2 border-slate-300 text-center  ">
-                  {new Date(item.updatedTs).toLocaleString()}
+                  {new Date(autitTrailRecord.updatedTs).toLocaleString()}
                 </td>
                 <td className="border  border-2 p-2 border-slate-300 text-center">
-                  <div>
-                    <button
+                  <ButtonGroup>
+                    <Button
                       disabled={index === 0}
-                      className="primary-button flex-1 text-sm"
                       onClick={() => {
-                        handleRestore(item.data);
+                        handleRestore(autitTrailRecord.data);
                       }}
                     >
                       Restore
-                    </button>
+                    </Button>
 
-                    <button
-                      disabled={index === 0}
-                      className="primary-button flex-1 text-sm"
-                      onClick={() => {
-                        deleteItem(item.id);
+                    <ConfirmModal
+                      title="Delete Audit trail"
+                      description={`Delete this audit trail record for project ${
+                        autitTrailRecord.data.name ?? ""
+                      }?`}
+                      onConfirm={() => {
+                        deleteItem(autitTrailRecord.id);
                       }}
-                    >
-                      Delete
-                    </button>
-                    <button
-                      className="primary-button flex-1 text-sm"
+                      renderConfirmButton={(open) => (
+                        <Button disabled={index === 0} onClick={open}>
+                          Delete
+                        </Button>
+                      )}
+                    />
+                    <Button
                       onClick={() => {
-                        setShowModalData(item);
+                        setShowModalData(autitTrailRecord);
                       }}
                     >
                       View
-                    </button>
-                  </div>
+                    </Button>
+                  </ButtonGroup>
                 </td>
               </tr>
             ))

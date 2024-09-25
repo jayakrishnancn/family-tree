@@ -13,6 +13,8 @@ import { ProjectRecord } from "./types/proejct";
 import { toast } from "react-toastify";
 import { useSpinnerContext } from "./context/SpinnerContext";
 import ShareBoard from "./components/ShareBoard";
+import ConfirmModal from "./components/ConfirmButton";
+import { toastConfigs } from "./utils/toast";
 
 export default function HomePage() {
   const { user } = useAuth();
@@ -38,16 +40,16 @@ export default function HomePage() {
 
   const handleDelete = (project: ProjectRecord) => () => {
     if (!project.id) {
-      toast.error("unknwon projectId");
+      toast.error("unknwon projectId", toastConfigs);
       return;
     }
     setLoading(true);
     deleteProject(userId, project.id)
       .then(() => {
-        toast.success("Project deleted successfully.");
+        toast.success("Project deleted successfully.", toastConfigs);
       })
       .catch((error) => {
-        toast.error("Cant delete project. " + error?.message);
+        toast.error("Cant delete project. " + error?.message, toastConfigs);
       })
       .finally(() => {
         setLoading(false);
@@ -103,9 +105,17 @@ export default function HomePage() {
                   <ShareBoard
                     userId={userId}
                     projectId={project.id}
+                    projectTitle={project.name}
                     sharedWith={project.sharedWith ?? []}
                   />
-                  <Button onClick={handleDelete(project)}>Delete</Button>
+                  <ConfirmModal
+                    title="Delete Project"
+                    description={`Delete this project ${project.name ?? ""}?`}
+                    onConfirm={handleDelete(project)}
+                    renderConfirmButton={(open) => (
+                      <Button onClick={open}>Delete</Button>
+                    )}
+                  />
                   <Link
                     href={`/${userId}/${project.id}`}
                     className="primary-button"

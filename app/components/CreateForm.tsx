@@ -5,6 +5,7 @@ import { useSpinnerContext } from "../context/SpinnerContext";
 import { createRecordIfNotExist } from "../item-service-v2";
 import { toast } from "react-toastify";
 import ButtonGroup from "./ButtonGroup";
+import { toastConfigs } from "../utils/toast";
 
 interface CreateFormProps {
   onSuccess: () => void;
@@ -22,19 +23,22 @@ const CreateForm: FunctionComponent<CreateFormProps> = ({
   const handleSubmit = (e: any) => {
     e.preventDefault();
     if (projectName.trim().length === 0) {
-      toast.error("Project name is empty.");
+      toast.error("Project name is empty.", toastConfigs);
       return;
     }
     setLoading(true);
     createRecordIfNotExist(userId, projectName)
       .then(() => {
-        toast.success("Created new project with name " + projectName);
+        toast.success(
+          "Created new project with name " + projectName,
+          toastConfigs
+        );
         setProjectName("");
         onSuccess();
       })
       .catch((error) => {
         console.error(error);
-        toast.error("Error creating project. " + error?.message);
+        toast.error("Error creating project. " + error?.message, toastConfigs);
       })
       .finally(() => {
         setLoading(false);

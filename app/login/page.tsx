@@ -3,6 +3,7 @@ import { auth, provider } from "../firebase/config";
 import { signInWithPopup } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Button from "../components/Button";
 
 const Login = () => {
   const router = useRouter();
@@ -24,13 +25,11 @@ const Login = () => {
 
   return (
     <div className="w-screen h-screen flex justify-center items-center">
-      <button
-        disabled={loading}
-        className="primary-button round"
-        onClick={handleLogin}
-      >
-        Sign in with Google
-      </button>
+      <div>
+        <Button disabled={loading} className="text-lg" onClick={handleLogin}>
+          Sign in with Google
+        </Button>
+      </div>
     </div>
   );
 };

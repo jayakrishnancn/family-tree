@@ -9,6 +9,8 @@ import {
 } from "../item-service-v2";
 import Button from "./Button";
 import { BiShareAlt, BiTrash } from "react-icons/bi";
+import ConfirmModal from "./ConfirmButton";
+import { toastConfigs } from "../utils/toast";
 
 const getUrl = (userId: string, projectId: string) =>
   `https://simple-family-tree.netlify.app/${userId}/${projectId}`;
@@ -17,9 +19,11 @@ export default function ShareBoard({
   userId,
   projectId,
   sharedWith,
+  projectTitle,
 }: {
   userId: string;
   projectId: string;
+  projectTitle: string;
   sharedWith: string[];
 }) {
   const [loading, setLoading] = useState(false);
@@ -31,11 +35,14 @@ export default function ShareBoard({
     addEmailToSharedList({ userId, emailId, projectId })
       .then(() => {
         navigator && navigator.clipboard.writeText(getUrl(userId, projectId));
-        toast.success("Link copied");
+        toast.success("Link copied", toastConfigs);
       })
       .catch((error) => {
         console.error(error);
-        toast.error(`Error while adding email Id ${emailId} to shared List`);
+        toast.error(
+          `Error while adding email Id ${emailId} to shared List`,
+          toastConfigs
+        );
       })
       .finally(() => {
         setLoading(false);
@@ -48,11 +55,17 @@ export default function ShareBoard({
     setLoading(true);
     removeEmailToSharedList({ userId, emailId, projectId })
       .then(() => {
-        toast.success(`Removed emailId: ${emailId} from share list`);
+        toast.success(
+          `Removed emailId: ${emailId} from share list`,
+          toastConfigs
+        );
       })
       .catch((error) => {
         console.error(error);
-        toast.error(`Error while removing email Id ${emailId} to shared List`);
+        toast.error(
+          `Error while removing email Id ${emailId} to shared List`,
+          toastConfigs
+        );
       })
       .finally(() => {
         setLoading(false);
@@ -61,6 +74,14 @@ export default function ShareBoard({
 
   return (
     <>
+      <Button
+        disabled={loading}
+        className="primary-button flex flex–col gap-1"
+        onClick={() => setOpen(true)}
+        startIcon={<BiShareAlt />}
+      >
+        Share
+      </Button>
       <Modal
         show={open}
         onClose={() => {
@@ -68,7 +89,9 @@ export default function ShareBoard({
         }}
       >
         <div className="mt-10 flex flex-col gap-2 min-w-64">
-          <h2 className="mb-4 ">Enter EmailId to share this chart</h2>
+          <h2 className="mb-4 ">
+            Enter EmailId to share this chart ({projectTitle ?? projectId})
+          </h2>
           <input
             className="customInput"
             autoFocus
@@ -88,14 +111,22 @@ export default function ShareBoard({
               <hr className="mt-4 border-2 border-black" />
               <h3 className="font-bold text-center">Shared with</h3>
               <div className="flex flex-col">
-                {sharedWith.map((emailId) => (
+                {sharedWith.map((emailId: string) => (
                   <div className="flex my-1" key={emailId}>
                     <div className="primary-button flex-1  no-button px-2">
                       {emailId}
                     </div>
-                    <Button onClick={() => handleRemoveShare(emailId)}>
-                      <BiTrash />
-                    </Button>
+
+                    <ConfirmModal
+                      title="Remove Permission"
+                      description={`Remove permission for ${emailId} from project ${projectTitle}?`}
+                      onConfirm={() => handleRemoveShare(emailId)}
+                      renderConfirmButton={(onConfirm) => (
+                        <Button onClick={onConfirm}>
+                          <BiTrash />
+                        </Button>
+                      )}
+                    />
                   </div>
                 ))}
               </div>
@@ -105,15 +136,6 @@ export default function ShareBoard({
           )}
         </div>
       </Modal>
-
-      <Button
-        disabled={loading}
-        className="primary-button flex flex–col gap-1"
-        onClick={() => setOpen(true)}
-        startIcon={<BiShareAlt />}
-      >
-        Share
-      </Button>
     </>
   );
 }

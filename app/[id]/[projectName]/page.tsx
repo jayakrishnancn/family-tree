@@ -4,7 +4,7 @@ import Flow from "../../components/reactflow/Flow";
 import { Edge, Node, ReactFlowProvider } from "@xyflow/react";
 import { useEffect, useMemo, useState } from "react";
 import useAuth from "../../firebase/useAuth";
-import { Bounce, toast, ToastOptions } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import Link from "next/link";
 import Checkbox from "../../components/Checkbox";
@@ -14,23 +14,12 @@ import { deepEqual } from "@/app/utils/deepEqual";
 import ButtonGroup from "@/app/components/ButtonGroup";
 import { ProjectRecord } from "@/app/types/proejct";
 import { FaHistory } from "react-icons/fa";
+import { toastConfigs } from "@/app/utils/toast";
 
 export type NodesAndEdges = {
   nodes: Node[];
   edges: Edge[];
 };
-
-export const toastConfigs = {
-  position: "bottom-right",
-  autoClose: 5000,
-  hideProgressBar: false,
-  closeOnClick: true,
-  pauseOnHover: true,
-  draggable: true,
-  progress: undefined,
-  theme: "colored",
-  transition: Bounce,
-} as ToastOptions;
 
 export default function Home({ params }: any) {
   const [data, setData] = useState<ProjectRecord | null>(null);
@@ -81,7 +70,10 @@ export default function Home({ params }: any) {
       .catch((error) => {
         console.log(error);
         setError(error);
-        toast.error("Error: " + (error?.message ?? "unknown error"));
+        toast.error(
+          "Error: " + (error?.message ?? "unknown error"),
+          toastConfigs
+        );
       });
   };
 
@@ -154,6 +146,7 @@ export default function Home({ params }: any) {
               userId={userId}
               projectId={projectId}
               sharedWith={data.sharedWith}
+              projectTitle={data.name}
             />
             <Link
               href={`/${userId}/${projectId}/audit-trail`}
