@@ -1,6 +1,18 @@
-import { Handle, Position, useConnection, useReactFlow } from "@xyflow/react";
-import Image from "next/image";
-import { useCallback } from "react";
+import { useSpinnerContext } from "@/app/context/SpinnerContext";
+import useAuth from "@/app/firebase/useAuth";
+import { uploadImageWithTransaction } from "@/app/utils/upload";
+import {
+  Handle,
+  Node,
+  Position,
+  useConnection,
+  useReactFlow,
+} from "@xyflow/react";
+import { ChangeEvent, useCallback, useRef } from "react";
+import ButtonGroup from "../ButtonGroup";
+import Button from "../Button";
+import { MdUploadFile } from "react-icons/md";
+import { BiTrash } from "react-icons/bi";
 
 export enum SexEnum {
   M,
@@ -18,11 +30,14 @@ function getNextItem(currentItem: SexEnum): SexEnum {
   const nextIndex = (currentIndex + 1) % IMGS.length;
   return IMGS[nextIndex] ?? SexEnum.Unknown;
 }
-
-export default function CustomNode({ id, data }: any) {
+export default function CustomNode(params: any) {
+  const { id, data } = params;
   const connection = useConnection();
   const { updateNodeData } = useReactFlow();
+  const { setLoading } = useSpinnerContext();
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
+  const { user } = useAuth();
   const onChange = useCallback(
     (evt: any) => {
       updateNodeData(id, { label: evt.target.value });
@@ -36,6 +51,27 @@ export default function CustomNode({ id, data }: any) {
 
   const isTarget = connection.inProgress && connection.fromNode.id !== id;
 
+  const handleFileUpload = (e: ChangeEvent<HTMLInputElement>, data: Node) => {
+    const selectedFile = e.target.files?.[0];
+
+    const userId = user?.uid;
+    if (!selectedFile || !data || !userId) {
+      return;
+    }
+
+    setLoading(true);
+    uploadImageWithTransaction(selectedFile)
+      .then((imageUrl) => {
+        updateNodeData(id, { imageUrl });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+  const removeImage = () => {
+    updateNodeData(id, { imageUrl: null });
+  };
+
   const getImageFromSex = (sex: SexEnum | null) => {
     if (sex === SexEnum.F) {
       return "/f.svg";
@@ -47,7 +83,7 @@ export default function CustomNode({ id, data }: any) {
   };
 
   return (
-    <div className="customNode">
+    <div className="group customNode">
       <div
         className="customNodeBody"
         style={{
@@ -73,15 +109,42 @@ export default function CustomNode({ id, data }: any) {
           position={Position.Top}
           type="target"
         />
-        <div className="flex flex-col gap-1 items-center card-content">
-          <Image
-            src={getImageFromSex(data?.sex)}
-            alt="pic"
-            width={30}
-            height={30}
-            className="pic"
-            onClick={onChangeImg}
-          />
+        <div className=" flex flex-col gap-1 items-center card-content">
+          <ButtonGroup className="invisible group-hover:visible flex-row absolute top-8 -right-8 rotate-90 ">
+            <Button
+              className="text-xs min-w-0 p-1 "
+              varient="primary"
+              onClick={() => {
+                inputRef.current?.click();
+              }}
+              startIcon={<MdUploadFile className="-rotate-90" />}
+            />
+
+            <Button
+              className="textt-xs min-w-0 p-1"
+              varient="danger"
+              onClick={removeImage}
+              startIcon={<BiTrash className="-rotate-90" />}
+            />
+          </ButtonGroup>
+          <div>
+            {/* eslint-disable-next-line @next/next/no-img-element*/}
+            <img
+              src={data.imageUrl ?? getImageFromSex(data?.sex)}
+              alt="pic"
+              width={30}
+              height={30}
+              className="pic w-7 h-7"
+              onClick={onChangeImg}
+            />
+            <input
+              className="hidden"
+              type="file"
+              ref={inputRef}
+              id={`image-${id}`}
+              onChange={(e) => handleFileUpload(e, data)}
+            />
+          </div>
           <input
             id="text"
             name="text"
