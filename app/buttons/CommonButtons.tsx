@@ -5,6 +5,7 @@ import { BiShareAlt } from "react-icons/bi";
 import { PiPlus } from "react-icons/pi";
 import { BsEye } from "react-icons/bs";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import { useRouter } from "next/navigation";
 
 export function DeleteButton(props: ButtonProps) {
   return (
@@ -55,8 +56,15 @@ export function CreateButton(props: ButtonProps) {
 }
 
 export function BackButton(props: ButtonProps) {
+  const router = useRouter();
   return (
-    <Button startIcon={<IoMdArrowRoundBack />} {...props}>
+    <Button
+      onClick={() => {
+        router.back();
+      }}
+      startIcon={<IoMdArrowRoundBack />}
+      {...props}
+    >
       Back
     </Button>
   );

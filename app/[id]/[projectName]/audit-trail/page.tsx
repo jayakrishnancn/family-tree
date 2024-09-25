@@ -12,7 +12,6 @@ import {
   ProjectAuditTrail,
   updateProject,
 } from "@/app/item-service-v2";
-import { useRouter } from "next/navigation";
 import useAuth from "@/app/firebase/useAuth";
 import ButtonGroup from "@/app/components/ButtonGroup";
 import ConfirmModal from "@/app/components/ConfirmButton";
@@ -30,7 +29,6 @@ export default function AuditTrail({ params }: any) {
   const { setLoading } = useSpinnerContext();
   const userId = decodeURIComponent(params.id ?? "") || null;
   const projectId = decodeURIComponent(params.projectName ?? "") || null;
-  const router = useRouter();
   const { user } = useAuth();
 
   const fetchData = useCallback(() => {
@@ -133,11 +131,7 @@ export default function AuditTrail({ params }: any) {
   ) : (
     <div className="w-screen flex justify-center flex-col p-10">
       <div className="flex">
-        <BackButton
-          onClick={() => {
-            router.back();
-          }}
-        />
+        <BackButton />
       </div>
       <div className="flex gap-4 mb-4 justify-center items-center">
         <h2 className="text-2xl font-bold text-center">Audit trail</h2>
