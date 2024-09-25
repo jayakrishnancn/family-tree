@@ -40,7 +40,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
           <Button onClick={handleClose} varient="secondary">
             Cancel
           </Button>
-          <Button onClick={handleConfirm} varient="success">
+          <Button onClick={handleConfirm} varient="danger">
             Confirm
           </Button>
         </div>

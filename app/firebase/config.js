@@ -1,6 +1,7 @@
 import { initializeApp, getApps } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -21,5 +22,6 @@ export const firestoreDb = initializeFirestore(app, {
   localCache: 
     persistentLocalCache(/*settings*/{tabManager: persistentMultipleTabManager()})
 });
+export const storage = getStorage(app);
 
 export default app;

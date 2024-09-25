@@ -91,7 +91,9 @@ const CreateForm: FunctionComponent<CreateFormProps> = ({
           <Button varient="secondary" type="button" onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="submit">Create</Button>
+          <Button type="submit" varient="success">
+            Create
+          </Button>
         </ButtonGroup>
       </div>
     </form>

@@ -4,14 +4,19 @@ import ButtonGroup from "./components/ButtonGroup";
 import Modal from "./components/reactflow/Modal";
 import CreateForm from "./components/CreateForm";
 import useAuth from "./firebase/useAuth";
-import { useEffect, useState } from "react";
-import { deleteProject, listenToCollection } from "./item-service-v2";
+import { ChangeEvent, useEffect, useState } from "react";
+import {
+  deleteProject,
+  listenToCollection,
+  updateImageUrl,
+} from "./item-service-v2";
 import { ProjectRecord } from "./types/proejct";
 import { toast } from "react-toastify";
 import { useSpinnerContext } from "./context/SpinnerContext";
 import ShareBoard from "./components/ShareBoard";
 import ConfirmModal from "./components/ConfirmButton";
 import { toastConfigs } from "./utils/toast";
+import { uploadImageWithTransaction } from "./utils/upload";
 import {
   AuditTrailButton,
   CreateButton,
@@ -41,6 +46,29 @@ export default function HomePage() {
     const unsub = listenToCollection(userId, setProjects);
     return () => unsub();
   }, [userId]);
+
+  const handleFileUpload = (
+    e: ChangeEvent<HTMLInputElement>,
+    project: ProjectRecord
+  ) => {
+    const selectedFile = e.target.files?.[0];
+
+    if (!selectedFile || !project) {
+      return;
+    }
+
+    setLoading(true);
+    uploadImageWithTransaction(selectedFile)
+      .then((url) => {
+        console.log(url);
+        if (url) {
+          return updateImageUrl({ url, userId, projectId: project.id });
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   const handleDelete = (project: ProjectRecord) => () => {
     if (!project.id) {
@@ -83,11 +111,19 @@ export default function HomePage() {
               className="flex justify-between gap-x-6 py-5 gap-y-2 flex-col sm:flex-row"
             >
               <div className="flex min-w-0 gap-x-4">
-                {/* eslint-disable-next-line @next/next/no-img-element*/}
-                <img
-                  alt=""
-                  src={project.imageUrl}
-                  className="h-12 w-12 flex-none rounded-full bg-gray-50"
+                <label htmlFor={`image-${project.id}`}>
+                  {/* eslint-disable-next-line @next/next/no-img-element*/}
+                  <img
+                    alt=""
+                    src={project.imageUrl}
+                    className="h-12 w-12 flex-none rounded-full bg-gray-50"
+                  />
+                </label>
+                <input
+                  className="hidden"
+                  type="file"
+                  id={`image-${project.id}`}
+                  onChange={(e) => handleFileUpload(e, project)}
                 />
                 <div className="min-w-0 flex-auto">
                   <p className="text-sm font-semibold leading-6 text-gray-900">

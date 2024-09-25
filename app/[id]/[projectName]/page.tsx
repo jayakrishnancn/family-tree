@@ -12,7 +12,7 @@ import { deepEqual } from "@/app/utils/deepEqual";
 import ButtonGroup from "@/app/components/ButtonGroup";
 import { ProjectRecord } from "@/app/types/proejct";
 import { toastConfigs } from "@/app/utils/toast";
-import { AuditTrailButton } from "@/app/buttons/CommonButtons";
+import { AuditTrailButton, BackButton } from "@/app/buttons/CommonButtons";
 import Button from "@/app/components/Button";
 
 export type NodesAndEdges = {
@@ -52,7 +52,7 @@ export default function Home({ params }: any) {
     }
 
     updateProject({
-      projectId: userId,
+      userId,
       project: projectId,
       item: {
         ...nodeAndEdges,
@@ -121,6 +121,7 @@ export default function Home({ params }: any) {
       <div className="flex justify-between flex-col">
         <div className="flex m-4 flex-wrap justify-start gap-2">
           <ButtonGroup align="left">
+            <BackButton />
             <Button
               onClick={(e) => {
                 e.preventDefault();

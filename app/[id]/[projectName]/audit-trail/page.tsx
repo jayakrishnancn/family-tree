@@ -61,7 +61,7 @@ export default function AuditTrail({ params }: any) {
       }
       setLoading(true);
       updateProject({
-        projectId: userId,
+        userId,
         project: projectId,
         item: {
           ...item,
@@ -72,6 +72,7 @@ export default function AuditTrail({ params }: any) {
           lastUpdatedDatedTs: Date.now(),
         },
         force: true,
+        emailId: user?.email,
       })
         .then(() => {
           toast.success("Restored", toastConfigs);
@@ -85,7 +86,15 @@ export default function AuditTrail({ params }: any) {
           setShowModalData(null);
         });
     },
-    [fetchData, projectId, setLoading, user?.displayName, user?.uid, userId]
+    [
+      fetchData,
+      projectId,
+      setLoading,
+      user?.displayName,
+      user?.email,
+      user?.uid,
+      userId,
+    ]
   );
 
   const [showModalData, setShowModalData] = useState<ProjectAuditTrail | null>(

@@ -155,13 +155,13 @@ export async function deleteAuditTrail(
 }
 
 export async function updateProject({
-  projectId,
+  userId,
   project,
   force,
   item,
   emailId,
 }: {
-  projectId: string;
+  userId: string;
   project: string;
   item: Pick<
     ProjectRecord,
@@ -174,17 +174,16 @@ export async function updateProject({
     return false;
   }
   const batch = writeBatch(firestoreDb);
-  batch.update(getDoc(projectId, project), item);
-
-  const auditTrail = getAuditDoc(projectId, project, Date.now() + "");
+  batch.update(getDoc(userId, project), item);
+  const auditTrail = getAuditDoc(userId, project, Date.now() + "");
 
   batch.set(auditTrail, {
     data: item,
     updatedTs: Date.now(),
-    updatedBy: emailId,
+    updatedBy: emailId ?? "Unknown",
   } as ProjectAuditTrail);
 
-  console.log("Updating...", projectId, item);
+  console.log("Updating...", userId, item);
   await batch.commit();
   return true;
 }
@@ -215,9 +214,27 @@ export async function removeEmailToSharedList({
   projectId: string;
   emailId: string;
 }) {
-  debugger;
   const ref = getDoc(userId, projectId);
   await updateDoc(ref, {
     sharedWith: arrayRemove(emailId.trim().toLowerCase()),
   });
+}
+
+export async function updateImageUrl({
+  url,
+  userId,
+  projectId,
+}: {
+  url: string;
+  userId: string;
+  projectId: string;
+}) {
+  const ref = getDoc(userId, projectId);
+  return await setDoc(
+    ref,
+    {
+      imageUrl: url,
+    } as ProjectRecord,
+    { merge: true }
+  );
 }
