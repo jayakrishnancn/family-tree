@@ -8,8 +8,7 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 
 export function DeleteButton(props: ButtonProps) {
   return (
-    <Button varient="danger" {...props}>
-      <TbTrash />
+    <Button varient="danger" startIcon={<TbTrash />} {...props}>
       Delete
     </Button>
   );
@@ -17,7 +16,7 @@ export function DeleteButton(props: ButtonProps) {
 
 export function ViewButton(props: ButtonProps) {
   return (
-    <Button {...props} startIcon={<BsEye />}>
+    <Button startIcon={<BsEye />} {...props}>
       View
     </Button>
   );
@@ -25,7 +24,7 @@ export function ViewButton(props: ButtonProps) {
 
 export function CloneButton(props: ButtonProps) {
   return (
-    <Button {...props} startIcon={<FaClone />}>
+    <Button startIcon={<FaClone />} {...props}>
       Clone
     </Button>
   );
@@ -33,8 +32,7 @@ export function CloneButton(props: ButtonProps) {
 
 export function AuditTrailButton(props: ButtonProps) {
   return (
-    <Button {...props}>
-      <FaHistory />
+    <Button startIcon={<FaHistory />} {...props}>
       Audit trail
     </Button>
   );
@@ -58,7 +56,7 @@ export function CreateButton(props: ButtonProps) {
 
 export function BackButton(props: ButtonProps) {
   return (
-    <Button {...props} startIcon={<IoMdArrowRoundBack />}>
+    <Button startIcon={<IoMdArrowRoundBack />} {...props}>
       Back
     </Button>
   );
@@ -66,7 +64,7 @@ export function BackButton(props: ButtonProps) {
 
 export function RestoreButton(props: ButtonProps) {
   return (
-    <Button {...props} startIcon={<TbRestore />}>
+    <Button startIcon={<TbRestore />} {...props}>
       Restore
     </Button>
   );
