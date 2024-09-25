@@ -1,9 +1,6 @@
 "use client";
-import Link from "next/link";
 import { BiSolidGroup, BiSolidUser } from "react-icons/bi";
-import Button from "./components/Button";
 import ButtonGroup from "./components/ButtonGroup";
-import { IoMdAdd } from "react-icons/io";
 import Modal from "./components/reactflow/Modal";
 import CreateForm from "./components/CreateForm";
 import useAuth from "./firebase/useAuth";
@@ -15,6 +12,12 @@ import { useSpinnerContext } from "./context/SpinnerContext";
 import ShareBoard from "./components/ShareBoard";
 import ConfirmModal from "./components/ConfirmButton";
 import { toastConfigs } from "./utils/toast";
+import {
+  AuditTrailButton,
+  CreateButton,
+  DeleteButton,
+  ViewButton,
+} from "./buttons/CommonButtons";
 
 export default function HomePage() {
   const { user } = useAuth();
@@ -62,10 +65,12 @@ export default function HomePage() {
         <h1 className="text-2xl font-bold leading-7 text-gray-900 ">
           Projects
         </h1>
-        <Button startIcon={<IoMdAdd />} onClick={handleOpen}>
-          Create
-        </Button>
-        <Modal show={showCreate}>
+        <CreateButton onClick={handleOpen} />
+        <Modal
+          show={showCreate}
+          title="Create new project"
+          onClose={handleClose}
+        >
           <CreateForm
             onCancel={handleClose}
             onSuccess={handleClose}
@@ -102,6 +107,10 @@ export default function HomePage() {
               </div>
               <div className="flex sm:flex-col sm:items-end">
                 <ButtonGroup align="right">
+                  <ViewButton href={`/${userId}/${project.id}`} />
+                  <AuditTrailButton
+                    href={`/${userId}/${project.id}/audit-trail`}
+                  />
                   <ShareBoard
                     userId={userId}
                     projectId={project.id}
@@ -113,21 +122,12 @@ export default function HomePage() {
                     description={`Delete this project ${project.name ?? ""}?`}
                     onConfirm={handleDelete(project)}
                     renderConfirmButton={(open) => (
-                      <Button onClick={open}>Delete</Button>
+                      <DeleteButton
+                        className="rounded-r-[30px]"
+                        onClick={open}
+                      />
                     )}
                   />
-                  <Link
-                    href={`/${userId}/${project.id}`}
-                    className="primary-button"
-                  >
-                    View
-                  </Link>
-                  <Link
-                    href={`/${userId}/${project.id}/audit-trail`}
-                    className="primary-button"
-                  >
-                    Audit trail
-                  </Link>
                 </ButtonGroup>
                 <p className="mt-1 text-xs leading-5 text-gray-500">
                   Last updated by{" "}

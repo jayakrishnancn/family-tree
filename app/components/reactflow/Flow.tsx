@@ -170,7 +170,7 @@ const Flow = ({
             <Button onClick={onAdd} startIcon={<CgAdd />}>
               Add node
             </Button>
-            <Button onClick={onSave} startIcon={<BiSave />}>
+            <Button varient="success" onClick={onSave} startIcon={<BiSave />}>
               Save
             </Button>
           </ButtonGroup>

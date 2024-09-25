@@ -7,10 +7,9 @@ import {
   addEmailToSharedList,
   removeEmailToSharedList,
 } from "../item-service-v2";
-import Button from "./Button";
-import { BiShareAlt, BiTrash } from "react-icons/bi";
 import ConfirmModal from "./ConfirmButton";
 import { toastConfigs } from "../utils/toast";
+import { DeleteButton, ShareButton } from "../buttons/CommonButtons";
 
 const getUrl = (userId: string, projectId: string) =>
   `https://simple-family-tree.netlify.app/${userId}/${projectId}`;
@@ -31,6 +30,9 @@ export default function ShareBoard({
   const [emailId, setEmailId] = useState("");
 
   const handleShare = () => {
+    if (!emailId) {
+      return;
+    }
     setLoading(true);
     addEmailToSharedList({ userId, emailId, projectId })
       .then(() => {
@@ -49,7 +51,7 @@ export default function ShareBoard({
       });
   };
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
-    setEmailId(event.target.value);
+    setEmailId(event.target.value.trim());
   }
   const handleRemoveShare = (emailId: string) => {
     setLoading(true);
@@ -74,24 +76,17 @@ export default function ShareBoard({
 
   return (
     <>
-      <Button
-        disabled={loading}
-        className="primary-button flex flex–col gap-1"
-        onClick={() => setOpen(true)}
-        startIcon={<BiShareAlt />}
-      >
-        Share
-      </Button>
+      <ShareButton disabled={loading} onClick={() => setOpen(true)} />
       <Modal
         show={open}
+        title={`Enter EmailId to share this chart (${
+          projectTitle ?? projectId
+        })`}
         onClose={() => {
           setOpen(false);
         }}
       >
-        <div className="mt-10 flex flex-col gap-2 min-w-64">
-          <h2 className="mb-4 ">
-            Enter EmailId to share this chart ({projectTitle ?? projectId})
-          </h2>
+        <div className="flex flex-col gap-2 min-w-64">
           <input
             className="customInput"
             autoFocus
@@ -100,12 +95,9 @@ export default function ShareBoard({
             value={emailId}
             onChange={handleChange}
           />
-          <button
-            className="primary-button round text-sm"
-            onClick={handleShare}
-          >
-            Share
-          </button>
+          <div className="flex mb-4 justify-end">
+            <ShareButton onClick={handleShare} varient="success" />
+          </div>
           {sharedWith?.length > 0 ? (
             <div>
               <hr className="mt-4 border-2 border-black" />
@@ -113,7 +105,7 @@ export default function ShareBoard({
               <div className="flex flex-col">
                 {sharedWith.map((emailId: string) => (
                   <div className="flex my-1" key={emailId}>
-                    <div className="primary-button flex-1  no-button px-2">
+                    <div className="primary-button no-button bg-white flex-1  border-b px-2">
                       {emailId}
                     </div>
 
@@ -122,9 +114,7 @@ export default function ShareBoard({
                       description={`Remove permission for ${emailId} from project ${projectTitle}?`}
                       onConfirm={() => handleRemoveShare(emailId)}
                       renderConfirmButton={(onConfirm) => (
-                        <Button onClick={onConfirm}>
-                          <BiTrash />
-                        </Button>
+                        <DeleteButton onClick={onConfirm} />
                       )}
                     />
                   </div>

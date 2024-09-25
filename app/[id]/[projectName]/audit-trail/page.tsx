@@ -13,12 +13,18 @@ import {
   ProjectAuditTrail,
   updateProject,
 } from "@/app/item-service-v2";
-import Button from "@/app/components/Button";
 import { useRouter } from "next/navigation";
 import useAuth from "@/app/firebase/useAuth";
 import ButtonGroup from "@/app/components/ButtonGroup";
 import ConfirmModal from "@/app/components/ConfirmButton";
 import { toastConfigs } from "@/app/utils/toast";
+import {
+  BackButton,
+  DeleteButton,
+  RestoreButton,
+  ViewButton,
+} from "@/app/buttons/CommonButtons";
+import { MdRestore } from "react-icons/md";
 
 export default function AuditTrail({ params }: any) {
   const [items, setItems] = useState([] as ProjectAuditTrail[]);
@@ -119,18 +125,16 @@ export default function AuditTrail({ params }: any) {
   ) : (
     <div className="w-screen flex justify-center flex-col p-10">
       <div className="flex">
-        <Button
+        <BackButton
           onClick={() => {
             router.back();
           }}
-        >
-          Back
-        </Button>
+        />
       </div>
       <div className="flex gap-4 mb-4 justify-center items-center">
         <h2 className="text-2xl font-bold text-center">Audit trail</h2>
       </div>
-      <table className="table-auto border-2 border-collapse border border-slate-400">
+      <table className="table-fixed border-2 border-collapse border border-slate-400">
         <thead>
           <tr>
             <th className="border  border-2 p-2 border-slate-300 ">
@@ -155,16 +159,14 @@ export default function AuditTrail({ params }: any) {
                 <td className="border  border-2 p-2 border-slate-300 text-center  ">
                   {new Date(autitTrailRecord.updatedTs).toLocaleString()}
                 </td>
-                <td className="border  border-2 p-2 border-slate-300 text-center">
+                <td className="border border-2 p-2 border-slate-300 text-center">
                   <ButtonGroup>
-                    <Button
+                    <RestoreButton
                       disabled={index === 0}
                       onClick={() => {
                         handleRestore(autitTrailRecord.data);
                       }}
-                    >
-                      Restore
-                    </Button>
+                    />
 
                     <ConfirmModal
                       title="Delete Audit trail"
@@ -175,18 +177,14 @@ export default function AuditTrail({ params }: any) {
                         deleteItem(autitTrailRecord.id);
                       }}
                       renderConfirmButton={(open) => (
-                        <Button disabled={index === 0} onClick={open}>
-                          Delete
-                        </Button>
+                        <DeleteButton disabled={index === 0} onClick={open} />
                       )}
                     />
-                    <Button
+                    <ViewButton
                       onClick={() => {
                         setShowModalData(autitTrailRecord);
                       }}
-                    >
-                      View
-                    </Button>
+                    />
                   </ButtonGroup>
                 </td>
               </tr>
@@ -195,16 +193,19 @@ export default function AuditTrail({ params }: any) {
         </tbody>
       </table>
       <ReactFlowProvider>
-        <Modal show={showModalData} onClose={handleClose}>
-          <button
-            className="primary-button  round text-sm"
-            onClick={() => {
-              showModalData?.data && handleRestore(showModalData.data);
-            }}
+        <Modal title="View" show={!!showModalData} onClose={handleClose}>
+          <div className="flex justify-end mb-2">
+            <RestoreButton
+              onClick={() => {
+                showModalData?.data && handleRestore(showModalData.data);
+              }}
+              startIcon={<MdRestore />}
+            />
+          </div>
+          <div
+            style={{ height: "80vh", width: "90vw" }}
+            className="border-2 border-gray-300 rounded"
           >
-            Restore
-          </button>
-          <div style={{ height: "80vh", width: "90vw" }}>
             <Flow
               onChange={() => {}}
               initialEdges={showModalData?.data.edges ?? []}

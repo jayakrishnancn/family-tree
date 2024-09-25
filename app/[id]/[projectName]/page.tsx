@@ -6,15 +6,14 @@ import { useEffect, useMemo, useState } from "react";
 import useAuth from "../../firebase/useAuth";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
-import Link from "next/link";
 import Checkbox from "../../components/Checkbox";
 import ShareBoard from "../../components/ShareBoard";
 import { listenToProject, updateProject } from "../../item-service-v2";
 import { deepEqual } from "@/app/utils/deepEqual";
 import ButtonGroup from "@/app/components/ButtonGroup";
 import { ProjectRecord } from "@/app/types/proejct";
-import { FaHistory } from "react-icons/fa";
 import { toastConfigs } from "@/app/utils/toast";
+import { AuditTrailButton } from "@/app/buttons/CommonButtons";
 
 export type NodesAndEdges = {
   nodes: Node[];
@@ -148,12 +147,7 @@ export default function Home({ params }: any) {
               sharedWith={data.sharedWith}
               projectTitle={data.name}
             />
-            <Link
-              href={`/${userId}/${projectId}/audit-trail`}
-              className="primary-button gap-1 flex "
-            >
-              <FaHistory /> Audit Trail
-            </Link>
+            <AuditTrailButton href={`/${userId}/${projectId}/audit-trail`} />
           </ButtonGroup>
         </div>
 

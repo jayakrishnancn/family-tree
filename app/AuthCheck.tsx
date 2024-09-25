@@ -5,7 +5,6 @@ import useAuth from "./firebase/useAuth";
 import { auth } from "./firebase/config";
 import { toast, ToastContainer } from "react-toastify";
 import Spinner from "./components/Spinner/Spinner";
-import Link from "next/link";
 import ButtonGroup from "./components/ButtonGroup";
 import { BiHome, BiLogOut } from "react-icons/bi";
 import Button from "./components/Button";
@@ -47,9 +46,9 @@ const AuthCheck: FC<PropsWithChildren<AuthCheckProps>> = (props) => {
         <div className="mx-auto p-4">
           <div className="flex justify-end p-4">
             <ButtonGroup>
-              <Link href="/" className="primary-button flex gap-1">
-                <BiHome /> Home
-              </Link>
+              <Button href="/" startIcon={<BiHome />}>
+                Home
+              </Button>
               <div className="primary-button no-button">{user.email}</div>
               <Button startIcon={<BiLogOut />} onClick={handleLogout}>
                 Logout
