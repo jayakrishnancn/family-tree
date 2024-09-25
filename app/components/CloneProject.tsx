@@ -14,16 +14,19 @@ type CloneProjectProps = {
 export default function CloneProject({ project }: CloneProjectProps) {
   const { setLoading } = useSpinnerContext();
   const { user } = useAuth();
+
   const handleClone = () => {
     if (!project || !user?.uid) {
       return;
     }
+
     setLoading(true);
     const projectName = project.name + "-Clone";
     const projectData: ProjectRecord = {
       ...project,
       id: "UNKNOWN",
       name: projectName,
+      imageUrl: project.imageUrl ?? "/u.svg",
       lastUpdatedBy: {
         uid: user?.uid,
         displayName: user?.displayName,

@@ -60,8 +60,6 @@ export default function HomePage() {
       });
   };
 
-  const handleClone = (_: ProjectRecord) => {};
-
   return (
     <div className="max-w-2xl mx-auto border rounded-md p-4">
       <div className="flex justify-between border-b pb-4">
@@ -104,7 +102,7 @@ export default function HomePage() {
                   </p>
                 </div>
               </div>
-              <div className="flex flex-col self-center">
+              <div className="flex flex-col max-w-sm self-center">
                 <ButtonGroup align="right">
                   <CloneProject project={project} />
                   <ViewButton href={`/${userId}/${project.id}`} />
