@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import "./style.css";
+import "react-toastify/dist/ReactToastify.css";
 import AuthCheck from "./AuthCheck";
 import { SpinnerProvider } from "./context/SpinnerContext";
 

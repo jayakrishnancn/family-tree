@@ -46,7 +46,6 @@ div.customHandle.target {
   cursor: pointer;
   display: inline-block;
   font-weight: 600;
-  font-size: 14px;
   text-align: center;
   border-radius: 20px;
   min-width: 50px;
@@ -60,17 +59,19 @@ div.customHandle.target {
   border: 2px solid #422800;
   box-shadow: #422800 4px 4px 0 0;
   color: #422800;
+  z-index: 0;
 }
 
+.primary-button.no-button:focus,
 .primary-button.no-button:active,
 .primary-button.no-button:hover{
-  background-color: #fbeee0;
-  border: 2px solid #422800;
-  box-shadow: #422800 4px 4px 0 0;
-  color: #422800;
-  border-right:   0;
-  cursor: default;
-  transform: translate(0);
+  background-color: #fbeee0 !important;
+  border: 2px solid #422800 !important;
+  box-shadow: #422800 4px 4px 0 0 !important;
+  color: #422800 !important;
+  border-right:   0 !important;
+  cursor: default !important;
+  transform: translate(0) !important;
 }
 
 .primary-button:active, .primary-button:focus{

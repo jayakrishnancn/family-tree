@@ -1,6 +1,6 @@
 import { TbRestore, TbTrash } from "react-icons/tb";
 import Button, { ButtonProps } from "../components/Button";
-import { FaHistory } from "react-icons/fa";
+import { FaClone, FaHistory } from "react-icons/fa";
 import { BiShareAlt } from "react-icons/bi";
 import { PiPlus } from "react-icons/pi";
 import { BsEye } from "react-icons/bs";
@@ -19,6 +19,14 @@ export function ViewButton(props: ButtonProps) {
   return (
     <Button {...props} startIcon={<BsEye />}>
       View
+    </Button>
+  );
+}
+
+export function CloneButton(props: ButtonProps) {
+  return (
+    <Button {...props} startIcon={<FaClone />}>
+      Clone
     </Button>
   );
 }

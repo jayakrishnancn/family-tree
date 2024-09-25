@@ -22,7 +22,7 @@ export const defaultButtonClassess = "primary-button flex gap-1";
 
 const Button: FunctionComponent<PropsWithChildren<ButtonProps>> = (props) => {
   const { children, startIcon, varient = "default", href, ...rest } = props;
-  const classes = ["primary-button flex gap-1"];
+  const classes = ["primary-button text-xs sm:text-sm flex gap-1"];
 
   classes.push(VARIENT_COLOR_MAP[varient]);
   rest.className && classes.push(rest.className);

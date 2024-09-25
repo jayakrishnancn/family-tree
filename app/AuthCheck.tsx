@@ -9,6 +9,7 @@ import ButtonGroup from "./components/ButtonGroup";
 import { BiHome, BiLogOut } from "react-icons/bi";
 import Button from "./components/Button";
 import { toastConfigs } from "./utils/toast";
+import "react-toastify/dist/ReactToastify.css";
 
 interface AuthCheckProps {}
 
@@ -49,7 +50,9 @@ const AuthCheck: FC<PropsWithChildren<AuthCheckProps>> = (props) => {
               <Button href="/" startIcon={<BiHome />}>
                 Home
               </Button>
-              <div className="primary-button no-button">{user.email}</div>
+              <Button tabIndex={-1} className="no-button">
+                {user.email}
+              </Button>
               <Button startIcon={<BiLogOut />} onClick={handleLogout}>
                 Logout
               </Button>

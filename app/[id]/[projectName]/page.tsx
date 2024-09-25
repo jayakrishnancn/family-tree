@@ -5,7 +5,6 @@ import { Edge, Node, ReactFlowProvider } from "@xyflow/react";
 import { useEffect, useMemo, useState } from "react";
 import useAuth from "../../firebase/useAuth";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.min.css";
 import Checkbox from "../../components/Checkbox";
 import ShareBoard from "../../components/ShareBoard";
 import { listenToProject, updateProject } from "../../item-service-v2";
@@ -14,6 +13,7 @@ import ButtonGroup from "@/app/components/ButtonGroup";
 import { ProjectRecord } from "@/app/types/proejct";
 import { toastConfigs } from "@/app/utils/toast";
 import { AuditTrailButton } from "@/app/buttons/CommonButtons";
+import Button from "@/app/components/Button";
 
 export type NodesAndEdges = {
   nodes: Node[];
@@ -118,11 +118,10 @@ export default function Home({ params }: any) {
 
   return (
     projectId && (
-      <div>
+      <div className="flex justify-between flex-col">
         <div className="flex m-4 flex-wrap justify-start gap-2">
           <ButtonGroup align="left">
-            <div
-              className="primary-button flex items-center gap-4"
+            <Button
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -139,7 +138,7 @@ export default function Home({ params }: any) {
                 }}
               />
               <b>Auto Save {isAutoSaveOn ? "ON" : "OFF"}</b>
-            </div>
+            </Button>
 
             <ShareBoard
               userId={userId}
@@ -150,7 +149,6 @@ export default function Home({ params }: any) {
             <AuditTrailButton href={`/${userId}/${projectId}/audit-trail`} />
           </ButtonGroup>
         </div>
-
         <div
           style={{
             height: "80vh",

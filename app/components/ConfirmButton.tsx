@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Modal from "./reactflow/Modal";
+import Button from "./Button";
 
 interface ConfirmModalProps {
   title: string;
@@ -36,18 +37,12 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
       <Modal title={title} onClose={handleClose} show={isOpen}>
         <div className="p-4"> {description}</div>
         <div className="flex justify-end p-4 border-t">
-          <button
-            onClick={handleClose}
-            className="mr-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded"
-          >
+          <Button onClick={handleClose} varient="secondary">
             Cancel
-          </button>
-          <button
-            onClick={handleConfirm}
-            className="mr-2 px-4 py-2 bg-red-500 text-white hover:bg-red-600 rounded"
-          >
+          </Button>
+          <Button onClick={handleConfirm} varient="success">
             Confirm
-          </button>
+          </Button>
         </div>
       </Modal>
       {/* {isOpen && (

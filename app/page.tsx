@@ -18,6 +18,7 @@ import {
   DeleteButton,
   ViewButton,
 } from "./buttons/CommonButtons";
+import CloneProject from "./components/CloneProject";
 
 export default function HomePage() {
   const { user } = useAuth();
@@ -59,6 +60,8 @@ export default function HomePage() {
       });
   };
 
+  const handleClone = (_: ProjectRecord) => {};
+
   return (
     <div className="max-w-2xl mx-auto border rounded-md p-4">
       <div className="flex justify-between border-b pb-4">
@@ -71,11 +74,7 @@ export default function HomePage() {
           title="Create new project"
           onClose={handleClose}
         >
-          <CreateForm
-            onCancel={handleClose}
-            onSuccess={handleClose}
-            userId={userId}
-          />
+          <CreateForm onCancel={handleClose} onSuccess={handleClose} />
         </Modal>
       </div>
       <ul role="list" className="divide-y divide-gray-100">
@@ -83,7 +82,7 @@ export default function HomePage() {
           projects.map((project) => (
             <li
               key={project.id}
-              className="flex justify-between gap-x-6 py-5 flex-col sm:flex-row"
+              className="flex justify-between gap-x-6 py-5 gap-y-2 flex-col sm:flex-row"
             >
               <div className="flex min-w-0 gap-x-4">
                 {/* eslint-disable-next-line @next/next/no-img-element*/}
@@ -105,8 +104,9 @@ export default function HomePage() {
                   </p>
                 </div>
               </div>
-              <div className="flex sm:flex-col sm:items-end">
+              <div className="flex flex-col self-center">
                 <ButtonGroup align="right">
+                  <CloneProject project={project} />
                   <ViewButton href={`/${userId}/${project.id}`} />
                   <AuditTrailButton
                     href={`/${userId}/${project.id}/audit-trail`}
@@ -129,12 +129,6 @@ export default function HomePage() {
                     )}
                   />
                 </ButtonGroup>
-                <p className="mt-1 text-xs leading-5 text-gray-500">
-                  Last updated by{" "}
-                  {project.lastUpdatedBy?.displayName ?? "Unknown"}
-                  <br />
-                  on {new Date(project.lastUpdatedDatedTs).toLocaleString()}
-                </p>
               </div>
             </li>
           ))

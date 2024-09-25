@@ -6,19 +6,32 @@ import { createRecordIfNotExist } from "../item-service-v2";
 import { toast } from "react-toastify";
 import ButtonGroup from "./ButtonGroup";
 import { toastConfigs } from "../utils/toast";
+import { ProjectRecord } from "../types/proejct";
+import { Node } from "@xyflow/react";
+import { SexEnum } from "./reactflow/CustomNode";
+import useAuth from "../firebase/useAuth";
+
+const initialNodes = [
+  {
+    id: "0",
+    type: "custom",
+    data: { label: "", sex: SexEnum.Unknown },
+    position: { x: 0, y: 50 },
+  },
+] as Node[];
 
 interface CreateFormProps {
   onSuccess: () => void;
   onCancel: () => void;
-  userId: string;
 }
 
 const CreateForm: FunctionComponent<CreateFormProps> = ({
-  userId,
   onCancel,
   onSuccess,
 }) => {
   const { setLoading } = useSpinnerContext();
+  const { user } = useAuth();
+
   const [projectName, setProjectName] = useState("");
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -26,8 +39,24 @@ const CreateForm: FunctionComponent<CreateFormProps> = ({
       toast.error("Project name is empty.", toastConfigs);
       return;
     }
+    if (!user?.uid) {
+      return;
+    }
     setLoading(true);
-    createRecordIfNotExist(userId, projectName)
+    const projectData: ProjectRecord = {
+      nodes: initialNodes,
+      edges: [],
+      id: "UNKNOWN",
+      name: projectName,
+      imageUrl: "/u.svg",
+      lastUpdatedBy: {
+        uid: user?.uid,
+        displayName: user?.displayName,
+      },
+      lastUpdatedDatedTs: Date.now(),
+      sharedWith: [],
+    } as ProjectRecord;
+    createRecordIfNotExist(user?.uid, projectData)
       .then(() => {
         toast.success(
           "Created new project with name " + projectName,

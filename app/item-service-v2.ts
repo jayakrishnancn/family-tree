@@ -13,19 +13,8 @@ import {
   updateDoc,
   writeBatch,
 } from "firebase/firestore";
-import { auth, firestoreDb } from "./firebase/config";
-import { SexEnum } from "./components/reactflow/CustomNode";
-import { Node } from "@xyflow/react";
+import { firestoreDb } from "./firebase/config";
 import { ProjectRecord } from "./types/proejct";
-
-const initialNodes = [
-  {
-    id: "0",
-    type: "custom",
-    data: { label: "", sex: SexEnum.Unknown },
-    position: { x: 0, y: 50 },
-  },
-] as Node[];
 
 function getDoc(userId: string, project: string) {
   return doc(firestoreDb, userId, project);
@@ -46,28 +35,16 @@ const getAuditCol = (userId: string, project: string) => {
 
 export async function createRecordIfNotExist(
   userId: string,
-  project: string
-): Promise<ProjectRecord> {
-  if (await getRecord(userId, project)) {
+  project: ProjectRecord
+): Promise<void> {
+  if (await getRecord(userId, project.name)) {
     throw new Error(
       "Project already exist. Please choose a different project name"
     );
   }
   console.log("creating new ...", userId);
-  const data = {
-    nodes: initialNodes,
-    edges: [],
-    id: "UNKNOWN",
-    name: project,
-    imageUrl: "/u.svg",
-    lastUpdatedBy: {
-      uid: auth.currentUser?.uid,
-      displayName: auth.currentUser?.displayName,
-    },
-    lastUpdatedDatedTs: Date.now(),
-    sharedWith: [],
-  } as ProjectRecord;
-  return setDoc(getDoc(userId, project), data).then(() => data);
+
+  return setDoc(getDoc(userId, project.name), project);
 }
 
 export async function getRecord(
