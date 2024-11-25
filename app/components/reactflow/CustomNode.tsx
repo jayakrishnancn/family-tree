@@ -84,6 +84,7 @@ export default function CustomNode(params: any) {
     }
     return "/u.svg";
   };
+  const isLate = !!data.late;
 
   return (
     <div className="group customNode">
@@ -91,7 +92,11 @@ export default function CustomNode(params: any) {
         className="customNodeBody"
         style={{
           borderStyle: isTarget ? "dashed" : "solid",
-          backgroundColor: isTarget ? "#ffcce3" : "#fbeee0",
+          backgroundColor: isTarget
+            ? "#ffcce3"
+            : isLate
+            ? "#ffa099"
+            : "#fbeee0",
         }}
       >
         {data.birth_order && data.birth_order > 0 && (
@@ -158,6 +163,7 @@ export default function CustomNode(params: any) {
             value={data?.label ?? ""}
             placeholder="Name"
             autoComplete="off"
+            disabled
             onChange={onChange}
             className="nodrag"
           />

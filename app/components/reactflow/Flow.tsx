@@ -177,6 +177,7 @@ const Flow = ({
         connectionLineStyle={connectionLineStyle}
         snapToGrid
         minZoom={0.1}
+        fitView
       >
         <Controls />
         <Background variant={BackgroundVariant.Lines} />
