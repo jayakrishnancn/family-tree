@@ -71,6 +71,7 @@ const Flow = ({
 }) => {
   const [nodes, setNodes] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [rfInstance, setRfInstance] = useState<any>(null);
   const { screenToFlowPosition } = useReactFlow();
 
@@ -149,7 +150,6 @@ const Flow = ({
     };
     setNodes((nds) => nds.concat(newNode));
   }, [setNodes]);
-  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
 
   return (
     <div style={{ display: "flex", height: "100%" }}>

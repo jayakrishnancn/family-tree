@@ -95,7 +95,7 @@ const SidebarForm = ({ selectedNode }: SidebarFormProps) => {
 
   return (
     <div
-      className="flex gap-2 flex-col w-full p-2 max-w-50"
+      className="flex gap-2 flex-col w-full p-2 max-w-50 border-l-2 border-black"
       style={{ maxWidth: 250 }}
     >
       <div className="text-md font-bold">Details</div>
