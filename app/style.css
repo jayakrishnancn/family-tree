@@ -206,6 +206,15 @@ body > section {
   translate: 30px 0;
   background: green;
 }
+.switch.red input:checked ~ label {
+  border-color: red;
+}
+
+.switch.red input:checked ~ label::after {
+  translate: 30px 0;
+  background: red;
+}
+
 
 .switch input:disabled ~ label {
   opacity: 0.5;

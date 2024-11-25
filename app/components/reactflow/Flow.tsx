@@ -151,6 +151,14 @@ const Flow = ({
     setNodes((nds) => nds.concat(newNode));
   }, [setNodes]);
 
+  //todo: make this dynamic
+  const { x, y } = nodes.find((i) => !!i.data.isDefault)?.position || {
+    x: -21000,
+    y: -60,
+  };
+
+  const defaultViewport = { x: x + 21000, y: y + 60, zoom: 0.5 };
+
   return (
     <div style={{ display: "flex", height: "100%" }}>
       <ReactFlow
@@ -159,8 +167,8 @@ const Flow = ({
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        fitView
         nodeTypes={nodeTypes}
+        defaultViewport={defaultViewport}
         edgeTypes={edgeTypes}
         onConnectEnd={onConnectEnd}
         defaultEdgeOptions={defaultEdgeOptions}

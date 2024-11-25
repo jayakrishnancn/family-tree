@@ -8,6 +8,7 @@ import { useSpinnerContext } from "../context/SpinnerContext";
 import { uploadImageWithTransaction } from "../utils/upload";
 import ButtonGroup from "./ButtonGroup";
 import { MdUploadFile } from "react-icons/md";
+import Checkbox from "./Checkbox";
 
 type FieldType = {
   value: string;
@@ -104,6 +105,19 @@ const SidebarForm = ({ selectedNode }: SidebarFormProps) => {
         <div>no nodes selected</div>
       ) : (
         <>
+          <div className="flex gap-1">
+            <label htmlFor="late">Late?</label>
+            <Checkbox
+              id="late"
+              name="late"
+              color="red"
+              onChange={(e) => {
+                updateNodeData(id, { late: e.target.checked });
+              }}
+              isChecked={!!data.late}
+            />
+          </div>
+
           <Field
             value={data.label}
             label="Name"
