@@ -129,7 +129,7 @@ const SidebarForm = ({ selectedNode }: SidebarFormProps) => {
             type="number"
           />
           <select
-            value={data.sex}
+            value={data.sex ?? 2}
             name="sex"
             onChange={handleChange}
             className="w-full border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded "
