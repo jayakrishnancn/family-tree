@@ -212,6 +212,10 @@ body > section {
   cursor: not-allowed;
 }
 
+.customNodeBody input[value=""]{
+  border: 2px solid red !important;
+}
+
 .customNodeBody input:focus, 
 .customNodeBody input:active {
   border: 2px solid #000 !important;

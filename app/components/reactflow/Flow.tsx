@@ -31,6 +31,7 @@ import ButtonGroup from "../ButtonGroup";
 import Button from "../Button";
 import { BiSave } from "react-icons/bi";
 import { CgAdd } from "react-icons/cg";
+import SidebarForm from "../SidebarForm";
 const DELAY = 10000;
 
 const connectionLineStyle = {
@@ -70,11 +71,18 @@ const Flow = ({
 }) => {
   const [nodes, setNodes] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [rfInstance, setRfInstance] = useState<any>(null);
   const { screenToFlowPosition } = useReactFlow();
 
   const onNodesChange: OnNodesChange = useCallback(
-    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+    (changes) =>
+      setNodes((nds) => {
+        const updatedNodes = applyNodeChanges(changes, nds);
+        const selected = updatedNodes.find((node) => node.selected);
+        setSelectedNode(selected || null);
+        return updatedNodes;
+      }),
     [setNodes]
   );
 
@@ -144,39 +152,42 @@ const Flow = ({
   }, [setNodes]);
 
   return (
-    <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      fitView
-      nodeTypes={nodeTypes}
-      edgeTypes={edgeTypes}
-      onConnectEnd={onConnectEnd}
-      defaultEdgeOptions={defaultEdgeOptions}
-      onInit={setRfInstance}
-      connectionLineComponent={CustomConnectionLine}
-      connectionLineStyle={connectionLineStyle}
-      snapToGrid
-      minZoom={0.1}
-    >
-      <Controls />
-      <Background variant={BackgroundVariant.Lines} />
-      <MiniMap />
-      {showPanel && (
-        <Panel position="top-right">
-          <ButtonGroup>
-            <Button onClick={onAdd} startIcon={<CgAdd />}>
-              Add node
-            </Button>
-            <Button varient="success" onClick={onSave} startIcon={<BiSave />}>
-              Save
-            </Button>
-          </ButtonGroup>
-        </Panel>
-      )}
-    </ReactFlow>
+    <div style={{ display: "flex", height: "100%" }}>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        fitView
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        onConnectEnd={onConnectEnd}
+        defaultEdgeOptions={defaultEdgeOptions}
+        onInit={setRfInstance}
+        connectionLineComponent={CustomConnectionLine}
+        connectionLineStyle={connectionLineStyle}
+        snapToGrid
+        minZoom={0.1}
+      >
+        <Controls />
+        <Background variant={BackgroundVariant.Lines} />
+        <MiniMap />
+        {showPanel && (
+          <Panel position="top-right">
+            <ButtonGroup>
+              <Button onClick={onAdd} startIcon={<CgAdd />}>
+                Add node
+              </Button>
+              <Button varient="success" onClick={onSave} startIcon={<BiSave />}>
+                Save
+              </Button>
+            </ButtonGroup>
+          </Panel>
+        )}
+      </ReactFlow>
+      <SidebarForm selectedNode={selectedNode} />
+    </div>
   );
 };
 

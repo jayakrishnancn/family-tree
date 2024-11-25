@@ -22,7 +22,7 @@ export enum SexEnum {
 
 export const IMGS = [SexEnum.F, SexEnum.M, SexEnum.Unknown];
 
-function getNextItem(currentItem: SexEnum): SexEnum {
+export function getNextItem(currentItem: SexEnum): SexEnum {
   const currentIndex = IMGS.indexOf(currentItem);
   if (currentIndex === -1) {
     throw new Error("Item not found in the array");
@@ -45,9 +45,12 @@ export default function CustomNode(params: any) {
     [id, updateNodeData]
   );
   const onChangeImg = useCallback(() => {
+    if (data?.imageUrl) {
+      return;
+    }
     const sex = getNextItem(data?.sex ?? SexEnum.Unknown);
     updateNodeData(id, { sex });
-  }, [data?.sex, id, updateNodeData]);
+  }, [data?.imageUrl, data?.sex, id, updateNodeData]);
 
   const isTarget = connection.inProgress && connection.fromNode.id !== id;
 
