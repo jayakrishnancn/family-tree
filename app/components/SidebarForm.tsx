@@ -123,6 +123,18 @@ const SidebarForm = ({ selectedNode }: SidebarFormProps) => {
             onChange={handleChange}
           />
           <Field
+            value={data.place}
+            label="Place/District"
+            name="place"
+            onChange={handleChange}
+          />
+          <Field
+            value={data.phonenumber}
+            label="Phone Numbers (',')"
+            name="phonenumber"
+            onChange={handleChange}
+          />
+          <Field
             value={data.birth_order ?? 0}
             label="Birth order"
             name="birth_order"
