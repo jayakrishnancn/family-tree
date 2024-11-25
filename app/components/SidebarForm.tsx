@@ -20,8 +20,9 @@ type FieldType = {
 function Field({ value, label, name, onChange, type }: FieldType) {
   return (
     <div className="w-full max-w-sm min-w-[200px]">
+      <label className="text-xs text-gray">{label}</label>
       <input
-        className="w-full bg-transparent placeholder:text-slate-900 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+        className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
         placeholder={label}
         value={value ?? ""}
         onChange={onChange}
@@ -122,12 +123,20 @@ const SidebarForm = ({ selectedNode }: SidebarFormProps) => {
             onChange={handleChange}
           />
           <Field
+            value={data.birth_order ?? 0}
+            label="Birth order"
+            name="birth_order"
+            onChange={handleChange}
+            type="number"
+          />
+          <Field
             value={data.age}
             label="Age"
             name="age"
             onChange={handleChange}
             type="number"
           />
+
           <select
             value={data.sex ?? 2}
             name="sex"

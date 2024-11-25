@@ -94,6 +94,11 @@ export default function CustomNode(params: any) {
           backgroundColor: isTarget ? "#ffcce3" : "#fbeee0",
         }}
       >
+        {data.birth_order && data.birth_order > 0 && (
+          <div className="bg-blue-500 absolute p-1 rounded-tl-lg rounded-br-lg text-white">
+            {data.birth_order ?? "0"}
+          </div>
+        )}
         {(!connection.inProgress || !isTarget) && (
           <Handle
             className="customHandle source"
@@ -101,7 +106,6 @@ export default function CustomNode(params: any) {
             type="source"
           />
         )}
-
         {/* If handles are conditionally rendered and not present initially, you need to update the node internals https://reactflow.dev/docs/api/hooks/use-update-node-internals/ */}
         {/* In this case we don't need to use useUpdateNodeInternals, since !isConnecting is true at the beginning and all handles are rendered initially. */}
         <Handle
