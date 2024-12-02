@@ -74,6 +74,7 @@ const Flow = ({
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [rfInstance, setRfInstance] = useState<any>(null);
   const { screenToFlowPosition } = useReactFlow();
+  const [openSidebar, setOpenSidebar] = useState(true);
 
   const onNodesChange: OnNodesChange = useCallback(
     (changes) =>
@@ -160,7 +161,7 @@ const Flow = ({
   const defaultViewport = { x: x + 21000, y: y + 60, zoom: 0.5 };
 
   return (
-    <div style={{ display: "flex", height: "100%" }}>
+    <div style={{ display: "flex", height: "100%", position: "relative" }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -195,7 +196,25 @@ const Flow = ({
           </Panel>
         )}
       </ReactFlow>
-      <SidebarForm selectedNode={selectedNode} />
+      {openSidebar ? (
+        <SidebarForm
+          closeSidebar={() => {
+            setOpenSidebar(false);
+          }}
+          selectedNode={selectedNode}
+        />
+      ) : (
+        <div>
+          <Button
+            className="absolute -top-10 right-0"
+            onClick={() => {
+              setOpenSidebar((prev) => !prev);
+            }}
+          >
+            Open Sidebar
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

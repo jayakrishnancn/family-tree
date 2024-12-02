@@ -9,6 +9,7 @@ import { uploadImageWithTransaction } from "../utils/upload";
 import ButtonGroup from "./ButtonGroup";
 import { MdUploadFile } from "react-icons/md";
 import Checkbox from "./Checkbox";
+import { CgClose } from "react-icons/cg";
 
 type FieldType = {
   value: string;
@@ -36,9 +37,10 @@ function Field({ value, label, name, onChange, type }: FieldType) {
 
 type SidebarFormProps = {
   selectedNode: Node | null;
+  closeSidebar: () => void;
 };
 
-const SidebarForm = ({ selectedNode }: SidebarFormProps) => {
+const SidebarForm = ({ selectedNode, closeSidebar }: SidebarFormProps) => {
   const { updateNodeData } = useReactFlow();
 
   const id = selectedNode?.id + "";
@@ -95,11 +97,26 @@ const SidebarForm = ({ selectedNode }: SidebarFormProps) => {
     updateNodeData(id, { [name]: value });
   };
 
+  const copyAddress = () => {
+    updateNodeData(id, {
+      house_name2: data.house_name ?? "",
+      place: data.place2 ?? "",
+    });
+  };
+
   return (
     <div
-      className="flex gap-2 flex-col w-full p-2 max-w-50 border-l-2 border-black"
+      className="flex gap-2 flex-col w-full p-2 max-w-50 border-l-2 border-black overflow-auto  "
       style={{ maxWidth: 250 }}
     >
+      <div className="flex justify-end">
+        <div
+          className="border p-2 rounded cursor-pointer"
+          onClick={closeSidebar}
+        >
+          <CgClose />
+        </div>
+      </div>
       <div className="text-md font-bold">Details</div>
       {!data ? (
         <div>no nodes selected</div>
@@ -136,12 +153,37 @@ const SidebarForm = ({ selectedNode }: SidebarFormProps) => {
             name="house_name"
             onChange={handleChange}
           />
+
           <Field
             value={data.place}
             label="Place/District"
             name="place"
             onChange={handleChange}
           />
+
+          <div>
+            <div
+              className="flex items-center justify-end"
+              style={{ zoom: 0.6 }}
+            >
+              <Button onClick={copyAddress}>Copy</Button>
+            </div>
+            <div>
+              <Field
+                value={data.house_name2}
+                label="House name (birth)"
+                name="house_name2"
+                onChange={handleChange}
+              />
+              <Field
+                value={data.place2}
+                label="Place/District (birth)"
+                name="place2"
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
           <Field
             value={data.phonenumber}
             label="Phone Numbers (',')"
@@ -156,11 +198,10 @@ const SidebarForm = ({ selectedNode }: SidebarFormProps) => {
             type="number"
           />
           <Field
-            value={data.age}
-            label="Age"
-            name="age"
+            value={data.work}
+            label="Work"
+            name="work"
             onChange={handleChange}
-            type="number"
           />
 
           <select
@@ -216,7 +257,7 @@ const SidebarForm = ({ selectedNode }: SidebarFormProps) => {
               </ButtonGroup>
             </div>
           </div>
-          <pre className="bg-white border p-2 rounded max-h-40 overflow-auto">
+          <pre className="bg-white border min-h-40 p-2 rounded max-h-40 overflow-auto">
             {JSON.stringify(data, null, 2)}
           </pre>
         </>
